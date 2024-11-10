@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:itu_habitter/constants.dart';
-import 'package:itu_habitter/views/category_page.dart';
+import 'package:habitter_itu/constants.dart';
+import 'package:habitter_itu/views/category_page.dart';
 
 class BottomBar extends StatefulWidget {
   @override

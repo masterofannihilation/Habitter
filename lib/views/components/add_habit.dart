@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:itu_habitter/constants.dart';
+import 'package:habitter_itu/constants.dart';
 import 'package:hive/hive.dart';
-import 'package:itu_habitter/models/habit.dart'; // Import the Habit model
+import 'package:habitter_itu/models/habit.dart'; // Import the Habit model
 
 class AddHabitDialog extends StatefulWidget {
   // final Box<Habit> habitBox;
@@ -22,13 +22,18 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   TimeOfDay? reminderTime; // Default reminder time
   String description = ''; // Description
   List<String> categories = ['Work', 'Health', 'Hobby']; // Example categories
-  List<String> scheduleTypes = ['Daily', 'Weekly', 'Monthly']; // Example schedule types
+  List<String> scheduleTypes = [
+    'Daily',
+    'Weekly',
+    'Monthly'
+  ]; // Example schedule types
 
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        dialogBackgroundColor: backgroundColor, // Change the background color here
+        dialogBackgroundColor:
+            backgroundColor, // Change the background color here
       ),
       child: AlertDialog(
         titlePadding: EdgeInsets.zero,
@@ -47,13 +52,15 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       'assets/chevron-left.svg', // Path to your left SVG
                       height: 24.0,
                       width: 24.0,
-                      colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn), // Change the color to white
+                      colorFilter: ColorFilter.mode(Colors.white,
+                          BlendMode.srcIn), // Change the color to white
                     ),
                   ),
                   Center(
                     child: Text(
                       'Add Habit',
-                      style: TextStyle(color: Colors.white), // Change the text color here
+                      style: TextStyle(
+                          color: Colors.white), // Change the text color here
                     ),
                   ),
                   GestureDetector(
@@ -77,7 +84,8 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       'assets/check.svg', // Path to your right SVG
                       height: 24.0,
                       width: 24.0,
-                      colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn), // Change the color to white
+                      colorFilter: ColorFilter.mode(Colors.white,
+                          BlendMode.srcIn), // Change the color to white
                     ),
                   ),
                 ],
@@ -92,7 +100,8 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
               child: Center(
                 child: Text(
                   'Choose a Category:',
-                  style: TextStyle(color: Colors.white), // Change the text color here
+                  style: TextStyle(
+                      color: Colors.white), // Change the text color here
                 ),
               ),
             ),
@@ -112,13 +121,16 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       child: Row(
                         children: categories.map((category) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
                             child: Chip(
                               label: Text(category),
-                              backgroundColor: boxColor, // Change the color of the category bubbles here
+                              backgroundColor:
+                                  boxColor, // Change the color of the category bubbles here
                               labelStyle: TextStyle(color: Colors.white),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0), // Change the corner radius here
+                                borderRadius: BorderRadius.circular(
+                                    15.0), // Change the corner radius here
                               ),
                             ),
                           );
@@ -143,10 +155,13 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       width: double.infinity,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: boxColor, // Change the background color of the bubble here
-                        borderRadius: BorderRadius.circular(15.0), // Change the corner radius here
+                        color:
+                            boxColor, // Change the background color of the bubble here
+                        borderRadius: BorderRadius.circular(
+                            15.0), // Change the corner radius here
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
                       child: TextFormField(
                         onChanged: (value) {
                           habitName = value;
@@ -172,32 +187,43 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       children: [
                         Text(
                           'Schedule Type:',
-                          style: TextStyle(color: Colors.white), // Change the text color here
+                          style: TextStyle(
+                              color:
+                                  Colors.white), // Change the text color here
                         ),
                         Container(
                           width: 150, // Set the width of the dropdown
                           height: 40, // Set the height of the dropdown
                           decoration: BoxDecoration(
-                            color: boxColor, // Change the background color of the dropdown here
-                            borderRadius: BorderRadius.circular(15.0), // Change the corner radius here
+                            color:
+                                boxColor, // Change the background color of the dropdown here
+                            borderRadius: BorderRadius.circular(
+                                15.0), // Change the corner radius here
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: DropdownButton<String>(
                             value: scheduleType,
-                            dropdownColor: boxColor, // Change the dropdown background color here
+                            dropdownColor:
+                                boxColor, // Change the dropdown background color here
                             onChanged: (String? newValue) {
                               setState(() {
                                 scheduleType = newValue!;
                               });
                             },
-                            items: scheduleTypes.map<DropdownMenuItem<String>>((String value) {
+                            items: scheduleTypes
+                                .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value, style: TextStyle(color: Colors.white)), // Change the text color here
+                                child: Text(value,
+                                    style: TextStyle(
+                                        color: Colors
+                                            .white)), // Change the text color here
                               );
                             }).toList(),
-                            isExpanded: true, // Make the dropdown take the full width of the container
-                            underline: SizedBox(), // Remove the default underline
+                            isExpanded:
+                                true, // Make the dropdown take the full width of the container
+                            underline:
+                                SizedBox(), // Remove the default underline
                           ),
                         ),
                       ],
@@ -208,7 +234,9 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       children: [
                         Text(
                           'Reminder:',
-                          style: TextStyle(color: Colors.white), // Change the text color here
+                          style: TextStyle(
+                              color:
+                                  Colors.white), // Change the text color here
                         ),
                         Switch(
                           value: hasReminder,
@@ -217,9 +245,12 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                               hasReminder = value;
                             });
                           },
-                          activeColor: Colors.white, // Change the active color of the switch here
-                          activeTrackColor: orangeColor, // Change the active track color of the switch here
-                          inactiveThumbColor: Colors.white, // Change the inactive thumb color to white
+                          activeColor: Colors
+                              .white, // Change the active color of the switch here
+                          activeTrackColor:
+                              orangeColor, // Change the active track color of the switch here
+                          inactiveThumbColor: Colors
+                              .white, // Change the inactive thumb color to white
                         ),
                         if (hasReminder)
                           TextButton(
@@ -235,7 +266,9 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                               }
                             },
                             child: Text(
-                              reminderTime != null ? reminderTime!.format(context) : 'Set Time',
+                              reminderTime != null
+                                  ? reminderTime!.format(context)
+                                  : 'Set Time',
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -246,10 +279,13 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       width: double.infinity,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: boxColor, // Change the background color of the bubble here
-                        borderRadius: BorderRadius.circular(15.0), // Change the corner radius here
+                        color:
+                            boxColor, // Change the background color of the bubble here
+                        borderRadius: BorderRadius.circular(
+                            15.0), // Change the corner radius here
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
                       child: TextFormField(
                         maxLines: 3,
                         onChanged: (value) {
@@ -275,7 +311,8 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   }
 }
 
-void showAddHabitDialog(BuildContext context, /*Box<Habit> habitBox,*/ DateTime? selectedDay) {
+void showAddHabitDialog(
+    BuildContext context, /*Box<Habit> habitBox,*/ DateTime? selectedDay) {
   showDialog(
     context: context,
     builder: (BuildContext context) {

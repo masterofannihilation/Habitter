@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../components/appbar.dart';
-import '../components/bottom_bar.dart';
-import '../components/add_button.dart';
-import '../components/emoji_picker_dialog.dart';
+import 'components/appbar.dart';
+import 'components/bottom_bar.dart';
+import 'components/add_button.dart';
 import '../constants.dart';
 import '../models/category.dart';
 import '../controllers/category_controller.dart';
+import 'components/add_category.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -16,6 +16,7 @@ class CategoryPage extends StatefulWidget {
 class _CategoryPageState extends State<CategoryPage> {
   final CategoryController _categoryController = CategoryController();
   List<Category> categories = [];
+  List<Category> selectedCategories = [];
 
   @override
   void initState() {
@@ -32,9 +33,32 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   Future<void> _addCategory(Category category) async {
-    await _categoryController.addCategory(category); // Ensure save completes
+    bool sucess = await _categoryController
+        .addCategory(category); // Ensure save completes
+    if (!sucess) {
+      // show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Category already exists."),
+        ),
+      );
+    }
     setState(() {
       categories = _categoryController.getCategories(); // Fetch latest list
+    });
+  }
+
+  Future<void> _deleteCategory(String id) async {
+    await _categoryController.deleteCategory(id); // Ensure delete completes
+    setState(() {
+      categories = _categoryController.getCategories(); // Fetch latest list
+    });
+  }
+
+  Future<void> _updateCategory(String id, Category updatedCategory) async {
+    await _categoryController.updateCategory(id, updatedCategory);
+    setState(() {
+      categories = _categoryController.getCategories();
     });
   }
 
@@ -92,7 +116,53 @@ class _CategoryPageState extends State<CategoryPage> {
                 final category = categories[index];
                 return GestureDetector(
                   onTap: () {
-                    print('Category ${category.name} tapped');
+                    // TODO: list all habits in this category
+                  },
+                  onLongPress: () {
+                    // edit or delete category
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: backgroundColor,
+                        title: Text(
+                          'Edit or delete category "${category.name}"?',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                final newCategory = await showDialog<Category>(
+                                  context: context,
+                                  builder: (context) => AddCategoryDialog(
+                                      emoji: category.emoji,
+                                      name: category.name),
+                                );
+                                if (newCategory != null) {
+                                  _updateCategory(category.id, newCategory);
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: Text(
+                                'Edit',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _deleteCategory(category.id);
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                'Delete',
+                                style: TextStyle(color: redColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -142,119 +212,5 @@ class _CategoryPageState extends State<CategoryPage> {
   void dispose() {
     _categoryController.closeBox();
     super.dispose();
-  }
-}
-
-class AddCategoryDialog extends StatefulWidget {
-  @override
-  _AddCategoryDialogState createState() => _AddCategoryDialogState();
-}
-
-class _AddCategoryDialogState extends State<AddCategoryDialog> {
-  String selectedEmoji = '😀'; // Default emoji
-  final TextEditingController _nameController = TextEditingController();
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: backgroundColor,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                Text(
-                  "Add category",
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
-                IconButton(
-                  icon: Icon(Icons.check, color: Colors.white),
-                  onPressed: () {
-                    // Check if name is entered
-                    if (_nameController.text.isNotEmpty) {
-                      // Create a new Category instance
-                      final newCategory = Category(
-                        name: _nameController.text,
-                        emoji: selectedEmoji,
-                      );
-                      // Pass the new category back to the calling context
-                      Navigator.of(context).pop(newCategory);
-                    } else {
-                      // Show an alert if the name is empty
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Please enter a category name."),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Text(
-              "Choose an icon:",
-              style: TextStyle(color: Colors.white, fontSize: 18),
-            ),
-            SizedBox(height: 20),
-            GestureDetector(
-              onTap: () async {
-                final emoji = await showDialog<String>(
-                  context: context,
-                  builder: (context) {
-                    return EmojiPickerDialog();
-                  },
-                );
-                if (emoji != null) {
-                  setState(() {
-                    selectedEmoji = emoji;
-                  });
-                }
-              },
-              child: Container(
-                padding: EdgeInsets.all(30),
-                decoration: BoxDecoration(
-                  color: boxColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  selectedEmoji,
-                  style: TextStyle(fontSize: 50),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _nameController,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "Name...",
-                hintStyle: TextStyle(color: Colors.white38),
-                filled: true,
-                fillColor: boxColor,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

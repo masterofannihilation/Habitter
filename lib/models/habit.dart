@@ -4,9 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'schedule.dart';
 import 'category.dart';
 
-
 part 'habit.g.dart';
-
 
 // enum ScheduleType{
 //   periodic, //4x do tyzdna
@@ -14,7 +12,7 @@ part 'habit.g.dart';
 //   interval // raz za 4 dni
 // }
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 0)
 class Habit extends HiveObject {
   //@HiveField(0)
   // String id;
@@ -26,11 +24,11 @@ class Habit extends HiveObject {
   Map<String, bool> completionStatus;
 
   @HiveField(2)
-  Schedule schedule;  // Type of schedule
+  Schedule schedule; // Type of schedule
 
   // @HiveField(4)
   // Category category;
- 
+
   @HiveField(3)
   bool reminder;
 
@@ -52,13 +50,11 @@ class Habit extends HiveObject {
     this.description = '',
     DateTime? reminderTime,
     DateTime? startDate,
-  })  : 
-    // this.id = id ?? const Uuid().v4(),
-    this.reminderTime = reminderTime ?? DateTime.now(),
-    this.startDate = startDate ?? DateTime.now(),
-    this.completionStatus = {};
-
-
+  })  :
+        // this.id = id ?? const Uuid().v4(),
+        this.reminderTime = reminderTime ?? DateTime.now(),
+        this.startDate = startDate ?? DateTime.now(),
+        this.completionStatus = {};
 
   // Convert date to string key (e.g., "2024-11-09")
   String _dateToKey(DateTime date) {
@@ -80,15 +76,14 @@ class Habit extends HiveObject {
   bool shouldOccurOnDate(DateTime date) {
     if (date.isBefore(startDate)) return false;
 
-    switch(schedule.type){
+    switch (schedule.type) {
       case ScheduleType.periodic:
         return true;
       //every wednesday
       case ScheduleType.statical:
-      
         return schedule.staticDays.contains(date.weekday);
       case ScheduleType.interval:
-        return date.difference(startDate).inDays % schedule.frequency == 0;  
+        return date.difference(startDate).inDays % schedule.frequency == 0;
     }
-}
+  }
 }

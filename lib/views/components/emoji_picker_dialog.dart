@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:itu_habitter/constants.dart';
+import 'package:habitter_itu/constants.dart';
 
 // Emoji picker dialog
 class EmojiPickerDialog extends StatelessWidget {
@@ -24,7 +24,7 @@ class EmojiPickerDialog extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
-              itemCount: 100, // Number of items
+              itemCount: 80, // Number of items
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 return GestureDetector(

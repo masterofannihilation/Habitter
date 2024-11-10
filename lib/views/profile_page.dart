@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:itu_habitter/components/appbar.dart';
-import 'package:itu_habitter/constants.dart';
+import 'package:habitter_itu/views/components/appbar.dart';
+import 'package:habitter_itu/constants.dart';
 
 class ProfilePage extends StatefulWidget {
   @override

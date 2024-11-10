@@ -1,12 +1,8 @@
 import 'package:hive/hive.dart';
 
-enum ScheduleType {
-  periodic,
-  statical,
-  interval
-}
+enum ScheduleType { periodic, statical, interval }
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 3)
 class Schedule extends HiveObject {
   @HiveField(0)
   ScheduleType type;
@@ -18,7 +14,11 @@ class Schedule extends HiveObject {
   String frequencyUnit;
 
   @HiveField(3)
-  List <int> staticDays;
+  List<int> staticDays;
 
-  Schedule({required this.type, required this.frequency, required this.frequencyUnit, required this.staticDays});  
+  Schedule(
+      {required this.type,
+      required this.frequency,
+      required this.frequencyUnit,
+      required this.staticDays});
 }
