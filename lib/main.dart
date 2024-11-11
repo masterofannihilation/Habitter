@@ -151,7 +151,13 @@ class _MyHomePageState extends State<MyHomePage> {
           //     )),
           // TODO: dajte to dole doprava hosi
 
-          AddButton(onPressed: () {}),
+          AddButton(onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AddHabitDialog(),
+              ),
+            );
+          }),
         ],
       ),
       bottomNavigationBar: BottomBar(),

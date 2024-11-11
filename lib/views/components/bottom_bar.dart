@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
+import 'package:habitter_itu/main.dart';
 import 'package:habitter_itu/views/category_page.dart';
 
 class BottomBar extends StatefulWidget {
+  int? selectedIndex;
+
+  BottomBar({this.selectedIndex});
+
   @override
   _BottomBarState createState() => _BottomBarState();
 }
 
 class _BottomBarState extends State<BottomBar> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex ?? 0;
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -19,6 +30,11 @@ class _BottomBarState extends State<BottomBar> {
     switch (index) {
       case 0:
         // Navigate to Home view
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+        );
+
         break;
       case 1:
         // Navigate to All Habits view

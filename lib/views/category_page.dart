@@ -204,7 +204,9 @@ class _CategoryPageState extends State<CategoryPage> {
           }
         },
       ),
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: BottomBar(
+        selectedIndex: 2,
+      ),
     );
   }
 
