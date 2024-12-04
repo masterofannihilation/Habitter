@@ -16,16 +16,19 @@ import 'views/components/add_habit.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import 'models/category.dart';
+import 'models/schedule.dart';
 import 'models/habit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
+
   Hive.registerAdapter(HabitAdapter());
   await Hive.openBox<Habit>('habits');
 
   Hive.registerAdapter(CategoryAdapter());
+  Hive.registerAdapter(ScheduleAdapter());
 
   runApp(MyApp());
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
+import 'package:habitter_itu/models/category.dart';
 import 'package:hive/hive.dart';
 import 'package:habitter_itu/models/habit.dart'; // Import the Habit model
+import 'package:habitter_itu/controllers/category_controller.dart';
+import 'package:habitter_itu/views/components/add_category.dart';
 
 class AddHabitDialog extends StatefulWidget {
   // final Box<Habit> habitBox;
@@ -21,12 +24,27 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   bool hasReminder = false; // Default reminder state
   TimeOfDay? reminderTime; // Default reminder time
   String description = ''; // Description
-  List<String> categories = ['Work', 'Health', 'Hobby']; // Example categories
+
+  final CategoryController _categoryController = CategoryController();
+  List<Category> categories = []; // Example categories
   List<String> scheduleTypes = [
     'Daily',
     'Weekly',
     'Monthly'
   ]; // Example schedule types
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    await _categoryController.init();
+    setState(() {
+      categories = _categoryController.getCategories();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,11 +128,19 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.add, color: Colors.white),
-                    onPressed: () {
-                      // Add your logic to add a new category
-                    },
-                  ),
+                      icon: Icon(Icons.add, color: Colors.white),
+                      onPressed: () async {
+                        final newCategory = await showDialog<Category>(
+                          context: context,
+                          builder: (_) => AddCategoryDialog(),
+                        );
+                        if (newCategory != null) {
+                          setState(() {
+                            _categoryController.addCategory(newCategory);
+                            categories.add(newCategory);
+                          });
+                        }
+                      }),
                   Expanded(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -124,7 +150,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 4.0),
                             child: Chip(
-                              label: Text(category),
+                              label: Text(category.name),
                               backgroundColor:
                                   boxColor, // Change the color of the category bubbles here
                               labelStyle: TextStyle(color: Colors.white),

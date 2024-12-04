@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 
+part 'schedule.g.dart';
+
 enum ScheduleType { periodic, statical, interval }
 
 @HiveType(typeId: 3)
