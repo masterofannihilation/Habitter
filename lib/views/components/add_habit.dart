@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
+import 'package:habitter_itu/controllers/habit_controller.dart';
 import 'package:habitter_itu/models/category.dart';
 import 'package:hive/hive.dart';
 import 'package:habitter_itu/models/habit.dart'; // Import the Habit model
 import 'package:habitter_itu/controllers/category_controller.dart';
 import 'package:habitter_itu/views/components/add_category.dart';
+import 'package:habitter_itu/models/schedule.dart';
 
 class AddHabitDialog extends StatefulWidget {
-  // final Box<Habit> habitBox;
   final DateTime? selectedDay;
 
-  AddHabitDialog({/*required this.habitBox,*/ this.selectedDay});
+  AddHabitDialog({
+    this.selectedDay,
+  });
 
   @override
   _AddHabitDialogState createState() => _AddHabitDialogState();
@@ -20,18 +23,16 @@ class AddHabitDialog extends StatefulWidget {
 class _AddHabitDialogState extends State<AddHabitDialog> {
   final _formKey = GlobalKey<FormState>();
   String habitName = '';
-  String scheduleType = 'Daily'; // Default schedule type
+  String scheduleType = 'Daily';
   bool hasReminder = false; // Default reminder state
   TimeOfDay? reminderTime; // Default reminder time
   String description = ''; // Description
+  Category? selectedCategory; // Selected category for the habit
 
   final CategoryController _categoryController = CategoryController();
-  List<Category> categories = []; // Example categories
-  List<String> scheduleTypes = [
-    'Daily',
-    'Weekly',
-    'Monthly'
-  ]; // Example schedule types
+  final HabitController _habitController = HabitController();
+  List<Category> categories = [];
+  List<String> scheduleTypes = ['Daily', 'Weekly', 'Monthly'];
 
   @override
   void initState() {
@@ -46,12 +47,56 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     });
   }
 
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      ScheduleType type;
+      if (scheduleType == 'Daily') {
+        type = ScheduleType.interval;
+      } else if (scheduleType == 'Weekly') {
+        type = ScheduleType.periodic;
+      } else {
+        type = ScheduleType.periodic;
+      }
+
+      final newSchedule = Schedule(type: type);
+
+      final newHabit = Habit(title: habitName, schedule: newSchedule);
+
+      // // Create a Habit instance
+      // final newHabit = Habit(
+      //   title: habitName,
+      //   schedule: Schedule(
+      //     type: scheduleType == 'Daily'
+      //         ? ScheduleType.periodic
+      //         : scheduleType == 'Weekly'
+      //             ? ScheduleType.statical
+      //             : ScheduleType.interval,
+      //     frequency: scheduleType == 'Monthly' ? 30 : 7, // Adjust frequency
+      //   ),
+      //   reminder: hasReminder,
+      //   reminderTime: reminderTime != null
+      //       ? DateTime(0, 0, 0, reminderTime!.hour, reminderTime!.minute)
+      //       : null,
+      //   description: description,
+      //   startDate: widget.selectedDay ?? DateTime.now(),
+      // );
+
+      // Save the habit using HabitController
+      _habitController.init();
+      _habitController.addHabit(newHabit);
+
+      // Close the dialog
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-        dialogBackgroundColor:
-            backgroundColor, // Change the background color here
+        dialogBackgroundColor: backgroundColor,
       ),
       child: AlertDialog(
         titlePadding: EdgeInsets.zero,
@@ -63,63 +108,39 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+                    onTap: () => Navigator.of(context).pop(),
                     child: SvgPicture.asset(
-                      'assets/chevron-left.svg', // Path to your left SVG
+                      'assets/chevron-left.svg',
                       height: 24.0,
                       width: 24.0,
-                      colorFilter: ColorFilter.mode(Colors.white,
-                          BlendMode.srcIn), // Change the color to white
+                      colorFilter:
+                          const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                     ),
                   ),
-                  Center(
-                    child: Text(
-                      'Add Habit',
-                      style: TextStyle(
-                          color: Colors.white), // Change the text color here
-                    ),
+                  const Text(
+                    'Add Habit',
+                    style: TextStyle(color: Colors.white),
                   ),
                   GestureDetector(
-                    // onTap: () {
-                    //   if (_formKey.currentState!.validate()) {
-                    //     _formKey.currentState!.save();
-                    //     setState(() {
-                    //       final newHabit = Habit(
-                    //         title: habitName,
-                    //         schedule: Schedule(type: ScheduleType.values.firstWhere((e) => e.toString().split('.').last == scheduleType)),
-                    //         reminder: hasReminder,
-                    //         reminderTime: reminderTime != null ? DateTime(0, 0, 0, reminderTime!.hour, reminderTime!.minute) : null,
-                    //         description: description,
-                    //       );
-                    //       widget.habitBox.add(newHabit);
-                    //     });
-                    //     Navigator.of(context).pop();
-                    //   }
-                    // },
+                    onTap: _submitForm, // Save the habit on tap
                     child: SvgPicture.asset(
-                      'assets/check.svg', // Path to your right SVG
+                      'assets/check.svg',
                       height: 24.0,
                       width: 24.0,
-                      colorFilter: ColorFilter.mode(Colors.white,
-                          BlendMode.srcIn), // Change the color to white
+                      colorFilter:
+                          const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                     ),
                   ),
                 ],
               ),
             ),
-            Divider(
-              color: Colors.grey, // Change the color of the line here
-              thickness: 1,
-            ),
+            Divider(color: Colors.grey, thickness: 1),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Center(
+              child: const Center(
                 child: Text(
                   'Choose a Category:',
-                  style: TextStyle(
-                      color: Colors.white), // Change the text color here
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
@@ -128,19 +149,20 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
               child: Row(
                 children: [
                   IconButton(
-                      icon: Icon(Icons.add, color: Colors.white),
-                      onPressed: () async {
-                        final newCategory = await showDialog<Category>(
-                          context: context,
-                          builder: (_) => AddCategoryDialog(),
-                        );
-                        if (newCategory != null) {
-                          setState(() {
-                            _categoryController.addCategory(newCategory);
-                            categories.add(newCategory);
-                          });
-                        }
-                      }),
+                    icon: const Icon(Icons.add, color: Colors.white),
+                    onPressed: () async {
+                      final newCategory = await showDialog<Category>(
+                        context: context,
+                        builder: (_) => AddCategoryDialog(),
+                      );
+                      if (newCategory != null) {
+                        setState(() {
+                          _categoryController.addCategory(newCategory);
+                          categories.add(newCategory);
+                        });
+                      }
+                    },
+                  ),
                   Expanded(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -149,15 +171,17 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                           return Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 4.0),
-                            child: Chip(
+                            child: ChoiceChip(
                               label: Text(category.name),
-                              backgroundColor:
-                                  boxColor, // Change the color of the category bubbles here
-                              labelStyle: TextStyle(color: Colors.white),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                    15.0), // Change the corner radius here
-                              ),
+                              selected: selectedCategory == category,
+                              onSelected: (bool selected) {
+                                setState(() {
+                                  selectedCategory = selected ? category : null;
+                                });
+                              },
+                              backgroundColor: boxColor,
+                              labelStyle: const TextStyle(color: Colors.white),
+                              selectedColor: orangeColor,
                             ),
                           );
                         }).toList(),
@@ -169,180 +193,152 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
             ),
           ],
         ),
-        content: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color:
-                            boxColor, // Change the background color of the bubble here
-                        borderRadius: BorderRadius.circular(
-                            15.0), // Change the corner radius here
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      child: TextFormField(
-                        onChanged: (value) {
-                          habitName = value;
-                        },
-                        decoration: InputDecoration(
-                          hintText: "Name...",
-                          border: InputBorder.none, // Remove the default border
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a habit name';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          habitName = value!;
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Schedule Type:',
-                          style: TextStyle(
-                              color:
-                                  Colors.white), // Change the text color here
-                        ),
-                        Container(
-                          width: 150, // Set the width of the dropdown
-                          height: 40, // Set the height of the dropdown
-                          decoration: BoxDecoration(
-                            color:
-                                boxColor, // Change the background color of the dropdown here
-                            borderRadius: BorderRadius.circular(
-                                15.0), // Change the corner radius here
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: DropdownButton<String>(
-                            value: scheduleType,
-                            dropdownColor:
-                                boxColor, // Change the dropdown background color here
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                scheduleType = newValue!;
-                              });
-                            },
-                            items: scheduleTypes
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,
-                                    style: TextStyle(
-                                        color: Colors
-                                            .white)), // Change the text color here
-                              );
-                            }).toList(),
-                            isExpanded:
-                                true, // Make the dropdown take the full width of the container
-                            underline:
-                                SizedBox(), // Remove the default underline
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Reminder:',
-                          style: TextStyle(
-                              color:
-                                  Colors.white), // Change the text color here
-                        ),
-                        Switch(
-                          value: hasReminder,
-                          onChanged: (bool value) {
-                            setState(() {
-                              hasReminder = value;
-                            });
-                          },
-                          activeColor: Colors
-                              .white, // Change the active color of the switch here
-                          activeTrackColor:
-                              orangeColor, // Change the active track color of the switch here
-                          inactiveThumbColor: Colors
-                              .white, // Change the inactive thumb color to white
-                        ),
-                        if (hasReminder)
-                          TextButton(
-                            onPressed: () async {
-                              final TimeOfDay? picked = await showTimePicker(
-                                context: context,
-                                initialTime: reminderTime ?? TimeOfDay.now(),
-                              );
-                              if (picked != null && picked != reminderTime) {
-                                setState(() {
-                                  reminderTime = picked;
-                                });
-                              }
-                            },
-                            child: Text(
-                              reminderTime != null
-                                  ? reminderTime!.format(context)
-                                  : 'Set Time',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                      ],
-                    ),
-                    SizedBox(height: 16.0),
-                    Container(
-                      width: double.infinity,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color:
-                            boxColor, // Change the background color of the bubble here
-                        borderRadius: BorderRadius.circular(
-                            15.0), // Change the corner radius here
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0, vertical: 8.0),
-                      child: TextFormField(
-                        maxLines: 3,
-                        onChanged: (value) {
-                          description = value;
-                        },
-                        decoration: InputDecoration(
-                          hintText: "Description...",
-                          border: InputBorder.none, // Remove the default border
-                        ),
-                        onSaved: (value) {
-                          description = value!;
-                        },
-                      ),
-                    ),
-                  ],
+        content: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Habit Name Field
+                _buildTextField(
+                  label: "Name...",
+                  onSaved: (value) => habitName = value!,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a habit name';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-            );
-          },
+                const SizedBox(height: 16.0),
+
+                // Schedule Type Dropdown
+                _buildDropdown(
+                  label: 'Schedule Type',
+                  value: scheduleType,
+                  items: scheduleTypes,
+                  onChanged: (newValue) => setState(() {
+                    scheduleType = newValue!;
+                  }),
+                ),
+
+                const SizedBox(height: 16.0),
+
+                // Reminder Switch
+                _buildSwitch(
+                  label: 'Reminder:',
+                  value: hasReminder,
+                  onChanged: (newValue) => setState(() {
+                    hasReminder = newValue;
+                  }),
+                ),
+                if (hasReminder)
+                  TextButton(
+                    onPressed: () async {
+                      final TimeOfDay? picked = await showTimePicker(
+                        context: context,
+                        initialTime: reminderTime ?? TimeOfDay.now(),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          reminderTime = picked;
+                        });
+                      }
+                    },
+                    child: Text(
+                      reminderTime != null
+                          ? reminderTime!.format(context)
+                          : 'Set Time',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+
+                const SizedBox(height: 16.0),
+
+                // Description Field
+                _buildTextField(
+                  label: "Description...",
+                  onSaved: (value) => description = value!,
+                  maxLines: 3,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
+
+  Widget _buildTextField({
+    required String label,
+    required FormFieldSetter<String> onSaved,
+    FormFieldValidator<String>? validator,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      onSaved: onSaved,
+      validator: validator,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        hintText: label,
+        filled: true,
+        fillColor: boxColor,
+        border: InputBorder.none,
+      ),
+    );
+  }
+
+  Widget _buildDropdown({
+    required String label,
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.white)),
+        DropdownButton<String>(
+          value: value,
+          onChanged: onChanged,
+          items: items
+              .map((item) => DropdownMenuItem<String>(
+                    value: item,
+                    child:
+                        Text(item, style: const TextStyle(color: Colors.white)),
+                  ))
+              .toList(),
+          dropdownColor: boxColor,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSwitch({
+    required String label,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(color: Colors.white)),
+        Switch(
+          value: value,
+          onChanged: onChanged,
+          activeColor: orangeColor,
+        ),
+      ],
+    );
+  }
 }
 
-void showAddHabitDialog(
-    BuildContext context, /*Box<Habit> habitBox,*/ DateTime? selectedDay) {
+void showAddHabitDialog(BuildContext context, HabitController habitController,
+    DateTime? selectedDay) {
   showDialog(
     context: context,
-    builder: (BuildContext context) {
-      return AddHabitDialog(/*habitBox: habitBox,*/ selectedDay: selectedDay);
-    },
+    builder: (context) => AddHabitDialog(
+      selectedDay: selectedDay,
+    ),
   );
 }

@@ -19,7 +19,7 @@ class ScheduleAdapter extends TypeAdapter<Schedule> {
     return Schedule(
       type: fields[0] as ScheduleType,
       frequency: fields[1] as int,
-      frequencyUnit: fields[2] as String,
+      frequencyUnit: fields[2] as FrequencyUnit,
       staticDays: (fields[3] as List).cast<int>(),
     );
   }
