@@ -79,6 +79,7 @@ flutter:
     - assets/check.svg
     - assets/chevron-left.svg
     - assets/white_circle.svg
+    - assets/profile.svg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+<<<<<<< Updated upstream
+=======
+import 'package:habitter_itu/models/profile.dart';
+import 'package:habitter_itu/views/category_page.dart';
+>>>>>>> Stashed changes
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'views/components/appbar.dart';
@@ -16,12 +21,18 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(HabitAdapter());
   Hive.registerAdapter(CategoryAdapter());
+<<<<<<< Updated upstream
   Hive.registerAdapter(ScheduleAdapter());
 
   Hive.registerAdapter(FrequencyUnitAdapter());
   Hive.registerAdapter(ScheduleTypeAdapter());
 
   await Hive.openBox<Habit>('habits');
+=======
+  Hive.registerAdapter(ProfileAdapter());
+  await Hive.openBox<Category>('categories');
+  await Hive.openBox<Profile>('profile');
+>>>>>>> Stashed changes
 
   runApp(MyApp());
 }
@@ -34,7 +45,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: ProfilePage(),
     );
   }
 }

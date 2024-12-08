@@ -3,8 +3,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/main.dart';
 import 'package:habitter_itu/views/category_page.dart';
+<<<<<<< Updated upstream
 import 'package:habitter_itu/views/habits_list_page.dart';
 import 'package:habitter_itu/views/statistics_page.dart';
+=======
+import 'package:habitter_itu/views/profile_page.dart';
+>>>>>>> Stashed changes
 
 class BottomBar extends StatefulWidget {
   final int? selectedIndex;
@@ -56,7 +60,11 @@ class _BottomBarState extends State<BottomBar> {
         // Navigate to stats view
         Navigator.push(
           context,
+<<<<<<< Updated upstream
           MaterialPageRoute(builder: (context) => StatisticsPage()),
+=======
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+>>>>>>> Stashed changes
         );
         break;
     }
