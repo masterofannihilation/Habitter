@@ -170,8 +170,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                     12.0), // Rounded corners
                               ),
                               child: ListTile(
+                                leading: Text(
+                                  habit.category.emoji ??
+                                      '😀', // Display the category emoji
+                                  style: TextStyle(fontSize: 40.0),
+                                ),
                                 contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 16.0, vertical: 8.0),
+                                  horizontal: 16.0,
+                                  vertical: 8.0,
+                                ),
                                 title: Text(
                                   habit.title,
                                   style: TextStyle(

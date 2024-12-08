@@ -4,6 +4,7 @@ import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/main.dart';
 import 'package:habitter_itu/views/category_page.dart';
 import 'package:habitter_itu/views/habits_list_page.dart';
+import 'package:habitter_itu/views/statistics_page.dart';
 
 class BottomBar extends StatefulWidget {
   int? selectedIndex;
@@ -53,6 +54,10 @@ class _BottomBarState extends State<BottomBar> {
         break;
       case 3:
         // Navigate to stats view
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => StatisticsPage()),
+        );
         break;
     }
   }

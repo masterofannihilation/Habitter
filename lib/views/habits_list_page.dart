@@ -54,78 +54,81 @@ class _HabitsListPageState extends State<HabitsListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: 'All Habits'),
-      body: ListView.builder(
-        itemCount: habits.length,
-        itemBuilder: (context, index) {
-          final habit = habits[index];
-          return Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 4.0, horizontal: 20.0),
-            child: Slidable(
-              key: ValueKey(habit.key),
-              endActionPane: ActionPane(
-                motion: const ScrollMotion(),
-                extentRatio: 0.25,
-                dismissible: DismissiblePane(onDismissed: () {
-                  _deleteHabit(index);
-                }),
-                children: [
-                  SlidableAction(
-                    onPressed: (_) => _deleteHabit(index),
-                    backgroundColor: redColor,
-                    foregroundColor: Colors.white,
-                    icon: Icons.delete,
-                    label: 'Delete',
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                ],
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HabitPage(habit: habit)),
-                  );
-                },
-                child: Container(
-                  height: 80.0,
-                  decoration: BoxDecoration(
-                    color: habitColor,
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: ListTile(
-                    leading: Text(
-                      habit.category.emoji ??
-                          '😀', // Display the category emoji
-                      style: TextStyle(fontSize: 40.0),
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: 8.0),
+        child: ListView.builder(
+          itemCount: habits.length,
+          itemBuilder: (context, index) {
+            final habit = habits[index];
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 4.0, horizontal: 20.0),
+              child: Slidable(
+                key: ValueKey(habit.key),
+                endActionPane: ActionPane(
+                  motion: const ScrollMotion(),
+                  extentRatio: 0.25,
+                  dismissible: DismissiblePane(onDismissed: () {
+                    _deleteHabit(index);
+                  }),
+                  children: [
+                    SlidableAction(
+                      onPressed: (_) => _deleteHabit(index),
+                      backgroundColor: redColor,
+                      foregroundColor: Colors.white,
+                      icon: Icons.delete,
+                      label: 'Delete',
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
+                  ],
+                ),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HabitPage(habit: habit)),
+                    );
+                  },
+                  child: Container(
+                    height: 80.0,
+                    decoration: BoxDecoration(
+                      color: habitColor,
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    title: Text(
-                      habit.title,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22.0,
+                    child: ListTile(
+                      leading: Text(
+                        habit.category.emoji ??
+                            '😀', // Display the category emoji
+                        style: TextStyle(fontSize: 40.0),
                       ),
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit, color: Colors.white),
-                          onPressed: () => _editHabit(habit),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      title: Text(
+                        habit.title,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22.0,
                         ),
-                      ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.white),
+                            onPressed: () => _editHabit(habit),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
       backgroundColor: backgroundColor,
       bottomNavigationBar: BottomBar(selectedIndex: 1),
