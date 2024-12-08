@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:habitter_itu/views/category_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hive/hive.dart';
-import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'views/components/appbar.dart';
 import 'package:habitter_itu/constants.dart';
 import 'views/components/bottom_bar.dart';
 import 'views/components/add_button.dart';
-import 'package:habitter_itu/views/profile_page.dart';
 import 'views/components/add_habit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'models/category.dart';
 import 'models/habit.dart';
 import 'models/schedule.dart';
@@ -182,8 +177,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 title: Text(
                                   habit.title,
                                   style: TextStyle(
-                                    color: Colors.white, // Set the text color
-                                    fontSize: 18.0, // Increase the font size
+                                    color: Colors.white,
+                                    fontSize: 18.0,
                                   ),
                                 ),
                                 trailing: Checkbox(

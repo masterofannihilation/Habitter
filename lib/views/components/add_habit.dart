@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/controllers/habit_controller.dart';
 import 'package:habitter_itu/models/category.dart';
-import 'package:hive/hive.dart';
 import 'package:habitter_itu/models/habit.dart'; // Import the Habit model
 import 'package:habitter_itu/controllers/category_controller.dart';
 import 'package:habitter_itu/views/components/add_category.dart';
@@ -65,9 +64,6 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
 
       final newHabit = Habit(
           title: habitName, schedule: newSchedule, category: selectedCategory!);
-
-      // print the new habit
-      // print(newHabit.title);
 
       // Save the habit using HabitController
       _habitController.addHabit(newHabit);

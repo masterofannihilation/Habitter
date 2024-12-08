@@ -1,7 +1,6 @@
 import 'package:hive/hive.dart';
-import 'package:uuid/uuid.dart';
-import 'schedule.dart'; // Assuming you have a schedule.dart file
-import 'category.dart'; // Assuming you have a category.dart file
+import 'schedule.dart';
+import 'category.dart';
 
 part 'habit.g.dart';
 

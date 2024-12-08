@@ -53,7 +53,7 @@ class _HabitsListPageState extends State<HabitsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'All Habits'),
+      appBar: CustomAppBar(),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 8.0),
         child: ListView.builder(

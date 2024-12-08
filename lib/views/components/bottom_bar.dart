@@ -7,7 +7,7 @@ import 'package:habitter_itu/views/habits_list_page.dart';
 import 'package:habitter_itu/views/statistics_page.dart';
 
 class BottomBar extends StatefulWidget {
-  int? selectedIndex;
+  final int? selectedIndex;
 
   BottomBar({this.selectedIndex});
 
