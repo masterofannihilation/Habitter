@@ -23,13 +23,14 @@ class HabitAdapter extends TypeAdapter<Habit> {
       description: fields[4] as String,
       reminderTime: fields[5] as DateTime?,
       startDate: fields[6] as DateTime?,
+      category: fields[7] as Category,
     )..completionStatus = (fields[1] as Map).cast<String, bool>();
   }
 
   @override
   void write(BinaryWriter writer, Habit obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -43,7 +44,9 @@ class HabitAdapter extends TypeAdapter<Habit> {
       ..writeByte(5)
       ..write(obj.reminderTime)
       ..writeByte(6)
-      ..write(obj.startDate);
+      ..write(obj.startDate)
+      ..writeByte(7)
+      ..write(obj.category);
   }
 
   @override

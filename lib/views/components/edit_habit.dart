@@ -8,25 +8,23 @@ import 'package:habitter_itu/controllers/category_controller.dart';
 import 'package:habitter_itu/views/components/add_category.dart';
 import 'package:habitter_itu/models/schedule.dart';
 
-class AddHabitDialog extends StatefulWidget {
-  final DateTime? selectedDay;
+class EditHabitDialog extends StatefulWidget {
+  final Habit habit;
 
-  AddHabitDialog({
-    this.selectedDay,
-  });
+  EditHabitDialog({required this.habit});
 
   @override
-  _AddHabitDialogState createState() => _AddHabitDialogState();
+  _EditHabitDialogState createState() => _EditHabitDialogState();
 }
 
-class _AddHabitDialogState extends State<AddHabitDialog> {
+class _EditHabitDialogState extends State<EditHabitDialog> {
   final _formKey = GlobalKey<FormState>();
-  String habitName = '';
-  String scheduleType = 'Daily';
-  bool hasReminder = false; // Default reminder state
-  TimeOfDay? reminderTime; // Default reminder time
-  String description = ''; // Description
-  Category? selectedCategory; // Selected category for the habit
+  late String habitName;
+  late String scheduleType;
+  late bool hasReminder;
+  late TimeOfDay? reminderTime;
+  late String description;
+  late Category? selectedCategory;
 
   final CategoryController _categoryController = CategoryController();
   final HabitController _habitController = HabitController();
@@ -36,6 +34,12 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   @override
   void initState() {
     super.initState();
+    habitName = widget.habit.title;
+    scheduleType = _mapScheduleTypeToString(widget.habit.schedule.type);
+    hasReminder = widget.habit.reminder;
+    reminderTime = TimeOfDay.fromDateTime(widget.habit.reminderTime);
+    description = widget.habit.description;
+    selectedCategory = widget.habit.category;
     _loadCategories();
     _habitController.init();
   }
@@ -47,26 +51,60 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     });
   }
 
+  String _mapScheduleTypeToString(ScheduleType type) {
+    switch (type) {
+      case ScheduleType.periodic:
+        return 'Daily';
+      case ScheduleType.statical:
+        return 'Weekly';
+      case ScheduleType.interval:
+        return 'Monthly';
+      default:
+        return 'Daily';
+    }
+  }
+
+  ScheduleType _mapStringToScheduleType(String type) {
+    switch (type) {
+      case 'Daily':
+        return ScheduleType.periodic;
+      case 'Weekly':
+        return ScheduleType.statical;
+      case 'Monthly':
+        return ScheduleType.interval;
+      default:
+        return ScheduleType.periodic;
+    }
+  }
+
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      ScheduleType type;
-      if (scheduleType == 'Daily') {
-        type = ScheduleType.periodic;
-      } else if (scheduleType == 'Weekly') {
-        type = ScheduleType.periodic;
-      } else {
-        type = ScheduleType.periodic;
-      }
+      ScheduleType type = _mapStringToScheduleType(scheduleType);
 
-      final newSchedule = Schedule(type: type);
+      final updatedSchedule = Schedule(type: type);
 
-      final newHabit = Habit(
-          title: habitName, schedule: newSchedule, category: selectedCategory!);
+      final updatedHabit = Habit(
+        title: habitName,
+        schedule: updatedSchedule,
+        category: selectedCategory!,
+        startDate: widget.habit.startDate,
+        reminder: hasReminder,
+        reminderTime: reminderTime?.format(context) != null
+            ? DateTime(
+                widget.habit.startDate.year,
+                widget.habit.startDate.month,
+                widget.habit.startDate.day,
+                reminderTime!.hour,
+                reminderTime!.minute,
+              )
+            : null,
+        description: description,
+      );
 
-      // Save the habit using HabitController
-      _habitController.addHabit(newHabit);
+      // Update the habit using HabitController
+      _habitController.updateHabit(widget.habit.key as int, updatedHabit);
 
       // Close the dialog
       Navigator.of(context).pop();
@@ -99,7 +137,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                     ),
                   ),
                   const Text(
-                    'Add Habit',
+                    'Edit Habit',
                     style: TextStyle(color: Colors.white),
                   ),
                   GestureDetector(
@@ -183,6 +221,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                 // Habit Name Field
                 _buildTextField(
                   label: "Name...",
+                  initialValue: habitName,
                   onSaved: (value) => habitName = value!,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -239,6 +278,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                 // Description Field
                 _buildTextField(
                   label: "Description...",
+                  initialValue: description,
                   onSaved: (value) => description = value!,
                   maxLines: 3,
                 ),
@@ -255,17 +295,20 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     required FormFieldSetter<String> onSaved,
     FormFieldValidator<String>? validator,
     int maxLines = 1,
+    String? initialValue,
   }) {
     return TextFormField(
       onSaved: onSaved,
       validator: validator,
       maxLines: maxLines,
+      initialValue: initialValue,
       decoration: InputDecoration(
         hintText: label,
         filled: true,
         fillColor: boxColor,
         border: InputBorder.none,
       ),
+      style: TextStyle(color: Colors.white),
     );
   }
 
@@ -312,14 +355,4 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
       ],
     );
   }
-}
-
-void showAddHabitDialog(BuildContext context, HabitController habitController,
-    DateTime? selectedDay) {
-  showDialog(
-    context: context,
-    builder: (context) => AddHabitDialog(
-      selectedDay: selectedDay,
-    ),
-  );
 }

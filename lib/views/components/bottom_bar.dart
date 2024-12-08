@@ -3,9 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/main.dart';
 import 'package:habitter_itu/views/category_page.dart';
+import 'package:habitter_itu/views/habits_list_page.dart';
+import 'package:habitter_itu/views/statistics_page.dart';
 
 class BottomBar extends StatefulWidget {
-  int? selectedIndex;
+  final int? selectedIndex;
 
   BottomBar({this.selectedIndex});
 
@@ -38,6 +40,10 @@ class _BottomBarState extends State<BottomBar> {
         break;
       case 1:
         // Navigate to All Habits view
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HabitsListPage()),
+        );
         break;
       case 2:
         // Navigate to Categories view
@@ -48,6 +54,10 @@ class _BottomBarState extends State<BottomBar> {
         break;
       case 3:
         // Navigate to stats view
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => StatisticsPage()),
+        );
         break;
     }
   }

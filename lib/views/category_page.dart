@@ -17,18 +17,38 @@ class _CategoryPageState extends State<CategoryPage> {
   final CategoryController _categoryController = CategoryController();
   List<Category> categories = [];
   List<Category> selectedCategories = [];
+  List<Category> filteredCategories = []; // For search results
+  final TextEditingController _searchController =
+      TextEditingController(); // Search controller
 
   @override
   void initState() {
     super.initState();
     _initializeController();
+
+    // Add listener to search controller
+    _searchController.addListener(_filterCategories);
   }
 
   Future<void> _initializeController() async {
     await _categoryController.init(); // Ensure box is opened
     setState(() {
       categories = _categoryController.getCategories();
-      print('Categories: $categories');
+      filteredCategories = categories; // Initially, show all categories
+    });
+  }
+
+  void _filterCategories() {
+    final query = _searchController.text.toLowerCase();
+
+    setState(() {
+      if (query.isEmpty) {
+        filteredCategories = categories;
+      } else {
+        filteredCategories = categories.where((category) {
+          return category.name.toLowerCase().contains(query);
+        }).toList();
+      }
     });
   }
 
@@ -45,6 +65,7 @@ class _CategoryPageState extends State<CategoryPage> {
     }
     setState(() {
       categories = _categoryController.getCategories(); // Fetch latest list
+      filteredCategories = categories; // Update filtered list
     });
   }
 
@@ -52,6 +73,7 @@ class _CategoryPageState extends State<CategoryPage> {
     await _categoryController.deleteCategory(id); // Ensure delete completes
     setState(() {
       categories = _categoryController.getCategories(); // Fetch latest list
+      filteredCategories = categories; // Update filtered list
     });
   }
 
@@ -59,6 +81,7 @@ class _CategoryPageState extends State<CategoryPage> {
     await _categoryController.updateCategory(id, updatedCategory);
     setState(() {
       categories = _categoryController.getCategories();
+      filteredCategories = categories; // Update filtered list
     });
   }
 
@@ -91,6 +114,7 @@ class _CategoryPageState extends State<CategoryPage> {
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: TextField(
+            controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search...',
               border: OutlineInputBorder(
@@ -111,9 +135,9 @@ class _CategoryPageState extends State<CategoryPage> {
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
               ),
-              itemCount: categories.length,
+              itemCount: filteredCategories.length,
               itemBuilder: (context, index) {
-                final category = categories[index];
+                final category = filteredCategories[index];
                 return GestureDetector(
                   onTap: () {
                     // TODO: list all habits in this category
@@ -213,6 +237,7 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   void dispose() {
     _categoryController.closeBox();
+    _searchController.dispose(); // Dispose search controller
     super.dispose();
   }
 }

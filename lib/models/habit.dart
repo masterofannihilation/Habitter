@@ -1,22 +1,11 @@
 import 'package:hive/hive.dart';
-import 'package:uuid/uuid.dart';
-//import schedule
 import 'schedule.dart';
 import 'category.dart';
 
 part 'habit.g.dart';
 
-// enum ScheduleType{
-//   periodic, //4x do tyzdna
-//   statical, // kazdy pondelok
-//   interval // raz za 4 dni
-// }
-
 @HiveType(typeId: 0)
 class Habit extends HiveObject {
-  //@HiveField(0)
-  // String id;
-
   @HiveField(0)
   String title;
 
@@ -25,9 +14,6 @@ class Habit extends HiveObject {
 
   @HiveField(2)
   Schedule schedule; // Type of schedule
-
-  // @HiveField(4)
-  // Category category;
 
   @HiveField(3)
   bool reminder;
@@ -41,20 +27,33 @@ class Habit extends HiveObject {
   @HiveField(6)
   DateTime startDate;
 
+  @HiveField(7)
+  Category category;
+
   Habit({
-    // String? id,
     required this.title,
     required this.schedule,
-    // this.category = Category.none,
     this.reminder = false,
-    this.description = '',
+    this.description = "",
     DateTime? reminderTime,
     DateTime? startDate,
-  })  :
-        // this.id = id ?? const Uuid().v4(),
-        this.reminderTime = reminderTime ?? DateTime.now(),
+    required this.category,
+  })  : this.reminderTime = reminderTime ?? DateTime.now(),
         this.startDate = startDate ?? DateTime.now(),
         this.completionStatus = {};
+
+  // Getter for isDone (for simplicity, checks if the habit is completed today)
+  bool get isDone {
+    String today = _dateToKey(DateTime.now());
+    return completionStatus[today] ?? false;
+  }
+
+  // Setter for isDone (marks today's completion status)
+  set isDone(bool value) {
+    String today = _dateToKey(DateTime.now());
+    completionStatus[today] = value;
+    save(); // Save the habit after changing the status
+  }
 
   // Convert date to string key (e.g., "2024-11-09")
   String _dateToKey(DateTime date) {
@@ -79,7 +78,6 @@ class Habit extends HiveObject {
     switch (schedule.type) {
       case ScheduleType.periodic:
         return true;
-      //every wednesday
       case ScheduleType.statical:
         return schedule.staticDays.contains(date.weekday);
       case ScheduleType.interval:
