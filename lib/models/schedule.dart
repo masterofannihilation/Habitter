@@ -2,11 +2,27 @@ import 'package:hive/hive.dart';
 
 part 'schedule.g.dart';
 
-enum ScheduleType { periodic, statical, interval }
-
-enum FrequencyUnit { days, weeks, months }
-
 @HiveType(typeId: 3)
+enum FrequencyUnit {
+  @HiveField(0)
+  days,
+  @HiveField(1)
+  weeks,
+  @HiveField(2)
+  months
+}
+
+@HiveType(typeId: 4)
+enum ScheduleType {
+  @HiveField(0)
+  periodic,
+  @HiveField(1)
+  statical,
+  @HiveField(2)
+  interval
+}
+
+@HiveType(typeId: 2)
 class Schedule extends HiveObject {
   @HiveField(0)
   ScheduleType type;

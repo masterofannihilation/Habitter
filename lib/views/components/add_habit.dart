@@ -38,6 +38,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   void initState() {
     super.initState();
     _loadCategories();
+    _habitController.init();
   }
 
   Future<void> _loadCategories() async {
@@ -53,7 +54,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
 
       ScheduleType type;
       if (scheduleType == 'Daily') {
-        type = ScheduleType.interval;
+        type = ScheduleType.periodic;
       } else if (scheduleType == 'Weekly') {
         type = ScheduleType.periodic;
       } else {
@@ -62,29 +63,13 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
 
       final newSchedule = Schedule(type: type);
 
-      final newHabit = Habit(title: habitName, schedule: newSchedule);
+      final newHabit = Habit(
+          title: habitName, schedule: newSchedule, category: selectedCategory!);
 
-      // // Create a Habit instance
-      // final newHabit = Habit(
-      //   title: habitName,
-      //   schedule: Schedule(
-      //     type: scheduleType == 'Daily'
-      //         ? ScheduleType.periodic
-      //         : scheduleType == 'Weekly'
-      //             ? ScheduleType.statical
-      //             : ScheduleType.interval,
-      //     frequency: scheduleType == 'Monthly' ? 30 : 7, // Adjust frequency
-      //   ),
-      //   reminder: hasReminder,
-      //   reminderTime: reminderTime != null
-      //       ? DateTime(0, 0, 0, reminderTime!.hour, reminderTime!.minute)
-      //       : null,
-      //   description: description,
-      //   startDate: widget.selectedDay ?? DateTime.now(),
-      // );
+      // print the new habit
+      // print(newHabit.title);
 
       // Save the habit using HabitController
-      _habitController.init();
       _habitController.addHabit(newHabit);
 
       // Close the dialog

@@ -5,12 +5,6 @@ import 'category.dart'; // Assuming you have a category.dart file
 
 part 'habit.g.dart';
 
-// enum ScheduleType {
-//   periodic, // Habit occurs periodically (e.g., every day)
-//   statical, // Habit occurs on specific days (e.g., every Monday)
-//   interval // Habit occurs on a specific interval (e.g., every 4 days)
-// }
-
 @HiveType(typeId: 0)
 class Habit extends HiveObject {
   @HiveField(0)
@@ -34,13 +28,17 @@ class Habit extends HiveObject {
   @HiveField(6)
   DateTime startDate;
 
+  @HiveField(7)
+  Category category;
+
   Habit({
     required this.title,
     required this.schedule,
     this.reminder = false,
-    this.description = '',
+    this.description = "",
     DateTime? reminderTime,
     DateTime? startDate,
+    required this.category,
   })  : this.reminderTime = reminderTime ?? DateTime.now(),
         this.startDate = startDate ?? DateTime.now(),
         this.completionStatus = {};
