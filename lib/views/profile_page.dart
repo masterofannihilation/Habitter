@@ -26,7 +26,12 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _loadProfile() async {
     Profile? profile = await _profileService.getProfile();
     setState(() {
-      _profile = profile ?? Profile(name: "John Doe", gender: "Unknown", dateOfBirth: DateTime.now(), bio: "");
+      _profile = profile ??
+          Profile(
+              name: "John Doe",
+              gender: "Unknown",
+              dateOfBirth: DateTime.now(),
+              bio: "");
       _bioController.text = _profile!.bio ?? '';
     });
   }
@@ -66,10 +71,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _showEditDialog() {
-    TextEditingController nameController = TextEditingController(text: _profile?.name);
-    TextEditingController genderController = TextEditingController(text: _profile?.gender);
-    TextEditingController dateOfBirthController = TextEditingController(text: _profile?.dateOfBirth.toLocal().toString().split(' ')[0]);
-    TextEditingController bioController = TextEditingController(text: _profile?.bio ?? '');
+    TextEditingController nameController =
+        TextEditingController(text: _profile?.name);
+    TextEditingController genderController =
+        TextEditingController(text: _profile?.gender);
+    TextEditingController dateOfBirthController = TextEditingController(
+        text: _profile?.dateOfBirth.toLocal().toString().split(' ')[0]);
+    TextEditingController bioController =
+        TextEditingController(text: _profile?.bio ?? '');
 
     showDialog(
       context: context,
@@ -98,7 +107,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       lastDate: DateTime.now(),
                     );
                     if (pickedDate != null) {
-                      dateOfBirthController.text = pickedDate.toLocal().toString().split(' ')[0];
+                      dateOfBirthController.text =
+                          pickedDate.toLocal().toString().split(' ')[0];
                     }
                   },
                 ),
@@ -159,7 +169,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 100,
                       decoration: BoxDecoration(
                         color: habitColor, // Set background color to habitColor
-                        borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                        borderRadius:
+                            BorderRadius.circular(8.0), // Rounded corners
                       ),
                       child: SvgPicture.asset(
                         'assets/profile.svg',
@@ -187,7 +198,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         Text(
-                          _profile!.dateOfBirth.toLocal().toString().split(' ')[0],
+                          _profile!.dateOfBirth
+                              .toLocal()
+                              .toString()
+                              .split(' ')[0],
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.grey,
@@ -207,18 +221,23 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 16),
                 TextField(
                   controller: _bioController,
-                  style: TextStyle(color: Colors.white), // Set text color to white
+                  style:
+                      TextStyle(color: Colors.white), // Set text color to white
                   decoration: InputDecoration(
                     labelText: 'Bio',
-                    labelStyle: TextStyle(color: Colors.white), // Set label color to white
+                    labelStyle: TextStyle(
+                        color: Colors.white), // Set label color to white
                     fillColor: habitColor, // Set background color to habitColor
                     filled: true, // Enable filling the background color
                     border: OutlineInputBorder(),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white), // Set border color to white
+                      borderSide: BorderSide(
+                          color: Colors.white), // Set border color to white
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white), // Set border color to white when focused
+                      borderSide: BorderSide(
+                          color: Colors
+                              .white), // Set border color to white when focused
                     ),
                   ),
                   maxLines: 3,
@@ -236,7 +255,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: IconButton(
               icon: Icon(Icons.edit),
               onPressed: _showEditDialog,
-            ),  
+            ),
           ),
         ],
       ),

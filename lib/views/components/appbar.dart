@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:habitter_itu/views/profile_page.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -23,6 +24,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: SvgPicture.asset('assets/sidebar.svg'),
         onPressed: () {
           // TODO: Implement navigation drawer
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ProfilePage()),
+          );
         },
       ),
       title: Center(
