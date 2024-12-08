@@ -227,6 +227,8 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) {
         return AddHabitDialog();
       },
-    );
+    ).then((_) {
+      setState(() {}); // Refresh the UI after adding a habit
+    });
   }
 }
