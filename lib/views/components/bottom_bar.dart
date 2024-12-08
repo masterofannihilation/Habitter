@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/main.dart';
 import 'package:habitter_itu/views/category_page.dart';
+import 'package:habitter_itu/views/habits_list_page.dart';
 
 class BottomBar extends StatefulWidget {
   int? selectedIndex;
@@ -38,6 +39,10 @@ class _BottomBarState extends State<BottomBar> {
         break;
       case 1:
         // Navigate to All Habits view
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HabitsListPage()),
+        );
         break;
       case 2:
         // Navigate to Categories view
