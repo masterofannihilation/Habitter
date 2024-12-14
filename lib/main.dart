@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     List<Habit> habits = await _habitController.getHabits();
     return habits.where((habit) {
-      return isSameDay(habit.startDate, _selectedDay);
+      return habit.shouldOccurOnDate(_selectedDay!);
     }).toList();
   }
 
@@ -182,13 +182,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 ),
                                 trailing: Checkbox(
-                                  value: habit.isDone,
+                                  value: habit.isDoneOn(_selectedDay!),
                                   onChanged: (value) {
                                     setState(() {
-                                      habit.isDone = value!;
+                                      habit.setDoneOn(_selectedDay!, value!);
                                       _habitController.updateHabit(
                                           habit.key as int, habit);
+                                      _habitController.printAllHabits();
                                     });
+                                  print("VALUE $value");
                                   },
                                   activeColor:
                                       Colors.white, // Set the active color

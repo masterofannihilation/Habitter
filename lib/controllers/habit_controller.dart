@@ -22,7 +22,7 @@ class HabitController {
 
   Future<void> updateHabit(int index, Habit habit) async {
     try {
-      await _habitBox.putAt(index, habit);
+      await _habitBox.put(index, habit);
     } catch (e) {
       print("Error updating habit: $e");
     }
@@ -48,6 +48,15 @@ class HabitController {
     return _habitBox.values
         .where((habit) => habit.title.contains(title))
         .toList();
+  }
+
+  // Print all habits to the console
+  void printAllHabits() {
+    final habits = _habitBox.values.toList();
+    for (var habit in habits) {
+      print('Habit: ${habit.title}, Description: ${habit.description}, Category: ${habit.category.name}');
+      print('Completion Status: ${habit.completionStatus}\n');
+    }
   }
 
   // Close the box

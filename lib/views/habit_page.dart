@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:habitter_itu/controllers/habit_controller.dart';
 import 'package:habitter_itu/models/habit.dart';
 import 'package:habitter_itu/constants.dart';
+import 'package:habitter_itu/models/schedule.dart';
+import 'components/edit_habit.dart'; // Import EditHabitDialog
 import 'components/appbar.dart';
 import 'components/bottom_bar.dart';
-import 'components/edit_habit.dart';
 
 class HabitPage extends StatefulWidget {
   final Habit habit;
@@ -23,137 +24,183 @@ class _HabitPageState extends State<HabitPage> {
     super.initState();
   }
 
-  void _editHabit() {
-    showDialog(
+  void _editHabit() async {
+    final result = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return EditHabitDialog(habit: widget.habit);
+        return EditHabitDialog(habit: widget.habit); // Updated to use EditHabitDialog
       },
-    ).then((_) {
-      setState(() {}); // Refresh the page after editing
-    });
+  );
+
+  if (result == true) {
+    setState(() {}); // Refresh the page after editing
+  }
+}
+
+  void _deleteHabit() async {
+    await _habitController.deleteHabit(widget.habit.key as int);
+    Navigator.of(context).pop(); // Go back to the previous screen after deletion
   }
 
-  void _toggleHabitCompletion() {
-    setState(() {
-      widget.habit.isDone = !widget.habit.isDone;
-      _habitController.updateHabit(widget.habit.key as int, widget.habit);
-    });
+  String dayNumberToWord(int dayNumber) {
+    switch (dayNumber) {
+      case 1:
+        return 'Monday';
+      case 2:
+        return 'Tuesday';
+      case 3:
+        return 'Wednesday';
+      case 4:
+        return 'Thursday';
+      case 5:
+        return 'Friday';
+      case 6:
+        return 'Saturday';
+      case 7:
+        return 'Sunday';
+      default:
+        return 'Unknown';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: widget.habit.title),
-      body: Column(
+      appBar: const CustomAppBar(title: 'Habitter'),
+      body: Stack(
         children: [
-          Expanded(
-            child: Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 100.0,
-                    height: 100.0,
-                    decoration: BoxDecoration(
-                      color: habitColor,
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        widget.habit.category.emoji ??
-                            '😀', // Display the category emoji
-                        style: TextStyle(fontSize: 80.0),
+          Column(
+            children: [
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 100.0,
+                      height: 100.0,
+                      decoration: BoxDecoration(
+                        color: habitColor,
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
-                    ),
-                  ),
-                  SizedBox(width: 8.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Details',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
+                      child: Center(
+                        child: Text(
+                          widget.habit.category.emoji ?? '😀', // Display the category emoji
+                          style: const TextStyle(fontSize: 80.0),
                         ),
                       ),
-                      SizedBox(height: 16.0),
-                      Text(
-                        'Category: ${widget.habit.category.name}',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Frequency: ${widget.habit.schedule.frequency} times per ${widget.habit.schedule.frequencyUnit.toString().split('.').last}',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(height: 8.0),
-                      Text(
-                        'Completion Rate: ${widget.habit.completionStatus.length}%',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(height: 16.0),
-                      Text(
-                        'Description',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8.0),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Text(
-                            widget.habit.description,
-                            style: TextStyle(color: Colors.white),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.habit.title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 16.0),
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: 'Category: ',
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                  text: widget.habit.category.name,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          if (widget.habit.schedule.type == ScheduleType.periodic)
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: 'Frequency: ',
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(
+                                    text: '${widget.habit.schedule.frequency} times per ${widget.habit.schedule.frequencyUnit.toString().split('.').last}',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (widget.habit.schedule.type == ScheduleType.interval)
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: 'Frequency: ',
+                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                  TextSpan(
+                                    text: 'Every ${widget.habit.schedule.frequency} ${widget.habit.schedule.frequencyUnit.toString().split('.').last}',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          if (widget.habit.schedule.type == ScheduleType.statical)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Static Days:',
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                ),
+                                ...widget.habit.schedule.staticDays.map((day) {
+                                  return Text(
+                                    dayNumberToWord(day),
+                                    style: const TextStyle(color: Colors.white),
+                                  );
+                                }).toList(),
+                              ],
+                            ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            'Completion Rate: ${widget.habit.completionStatus.length}%',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          const SizedBox(height: 16.0),
+                          const Text(
+                            'Description',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Text(
+                                widget.habit.description,
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: habitColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.0),
-                topRight: Radius.circular(16.0),
-              ),
-            ),
-            padding: EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _toggleHabitCompletion,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          widget.habit.isDone ? Colors.green : Colors.red,
-                    ),
-                    child: Text(
-                      widget.habit.isDone ? 'Undo' : 'Complete',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16.0),
-                ElevatedButton(
-                  onPressed: _editHabit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                  ),
-                  child: Text(
-                    'Edit',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
+          Positioned(
+            top: 16.0,
+            right: 16.0,
+            child: IconButton(
+              icon: Icon(Icons.edit, color: Colors.white),
+              onPressed: _editHabit,
             ),
           ),
         ],

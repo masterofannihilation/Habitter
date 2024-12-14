@@ -19,29 +19,30 @@ class EditHabitDialog extends StatefulWidget {
 
 class _EditHabitDialogState extends State<EditHabitDialog> {
   final _formKey = GlobalKey<FormState>();
-  late String habitName;
-  late String scheduleType;
-  late bool hasReminder;
-  late TimeOfDay? reminderTime;
-  late String description;
-  late Category? selectedCategory;
+  String habitName = '';
+  String scheduleType = 'periodic';
+  int frequency = 1;
+  String frequencyUnit = 'weeks';
+  String frequencyUnitPeriodic = 'week';
+  List<int> selectedDays = [];
+  bool hasReminder = false; // Default reminder state
+  TimeOfDay? reminderTime; // Default reminder time
+  String description = ''; // Description
+  Category? selectedCategory; // Selected category for the habit
 
   final CategoryController _categoryController = CategoryController();
   final HabitController _habitController = HabitController();
   List<Category> categories = [];
-  List<String> scheduleTypes = ['Daily', 'Weekly', 'Monthly'];
+  List<String> scheduleTypes = ['periodic', 'interval', 'static'];
+  List<String> frequencyUnitsPeriodic = ['week', 'month'];
+  List<String> frequencyUnits = ['days', 'weeks', 'months'];
 
   @override
   void initState() {
     super.initState();
-    habitName = widget.habit.title;
-    scheduleType = _mapScheduleTypeToString(widget.habit.schedule.type);
-    hasReminder = widget.habit.reminder;
-    reminderTime = TimeOfDay.fromDateTime(widget.habit.reminderTime);
-    description = widget.habit.description;
-    selectedCategory = widget.habit.category;
     _loadCategories();
     _habitController.init();
+    _initializeFormFields();
   }
 
   Future<void> _loadCategories() async {
@@ -51,65 +52,86 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
     });
   }
 
-  String _mapScheduleTypeToString(ScheduleType type) {
-    switch (type) {
-      case ScheduleType.periodic:
-        return 'Daily';
-      case ScheduleType.statical:
-        return 'Weekly';
-      case ScheduleType.interval:
-        return 'Monthly';
-      default:
-        return 'Daily';
-    }
-  }
+  void _initializeFormFields() {
+    final habit = widget.habit;
+    habitName = habit.title;
+    scheduleType = habit.schedule.type.toString().split('.').last;
+    frequency = habit.schedule.frequency;
+    frequencyUnit = habit.schedule.frequencyUnit.toString().split('.').last;
+    frequencyUnitPeriodic = habit.schedule.frequencyUnit == FrequencyUnit.weeks ? 'week' : 'month';
+    selectedDays = habit.schedule.staticDays;
+    hasReminder = habit.reminder;
+    reminderTime = TimeOfDay.fromDateTime(habit.reminderTime);
+    description = habit.description;
+    selectedCategory = habit.category;
 
-  ScheduleType _mapStringToScheduleType(String type) {
-    switch (type) {
-      case 'Daily':
-        return ScheduleType.periodic;
-      case 'Weekly':
-        return ScheduleType.statical;
-      case 'Monthly':
-        return ScheduleType.interval;
-      default:
-        return ScheduleType.periodic;
+    // Ensure scheduleType and frequencyUnit are valid
+    if (!scheduleTypes.contains(scheduleType)) {
+      scheduleType = scheduleTypes.first;
+    }
+    if (!frequencyUnits.contains(frequencyUnit)) {
+      frequencyUnit = frequencyUnits.first;
+    }
+    if (!frequencyUnitsPeriodic.contains(frequencyUnitPeriodic)) {
+      frequencyUnitPeriodic = frequencyUnitsPeriodic.first;
     }
   }
 
   void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
 
-      ScheduleType type = _mapStringToScheduleType(scheduleType);
-
-      final updatedSchedule = Schedule(type: type);
-
-      final updatedHabit = Habit(
-        title: habitName,
-        schedule: updatedSchedule,
-        category: selectedCategory!,
-        startDate: widget.habit.startDate,
-        reminder: hasReminder,
-        reminderTime: reminderTime?.format(context) != null
-            ? DateTime(
-                widget.habit.startDate.year,
-                widget.habit.startDate.month,
-                widget.habit.startDate.day,
-                reminderTime!.hour,
-                reminderTime!.minute,
-              )
-            : null,
-        description: description,
-      );
-
-      // Update the habit using HabitController
-      _habitController.updateHabit(widget.habit.key as int, updatedHabit);
-
-      // Close the dialog
-      Navigator.of(context).pop();
+    ScheduleType type;
+    if (scheduleType == 'periodic') {
+      type = ScheduleType.periodic;
+      frequencyUnit = frequencyUnitPeriodic;
+    } else if (scheduleType == 'interval') {
+      type = ScheduleType.interval;
+    } else {
+      type = ScheduleType.statical;
     }
+
+    FrequencyUnit freqUnit;
+    if (frequencyUnit == 'weeks' || frequencyUnit == 'week') {
+      freqUnit = FrequencyUnit.weeks;
+    } else if (frequencyUnit == 'months' || frequencyUnit == 'month') {
+      freqUnit = FrequencyUnit.months;
+    } else {
+      freqUnit = FrequencyUnit.days;
+    }
+
+    // Ensure frequency and selectedCategory are not null
+    if (frequency == null || selectedCategory == null) {
+      // Show an error message or handle the error appropriately
+      return;
+    }
+
+    // Create the schedule and assign all attributes before validation
+    final newSchedule = Schedule(
+      type: type,
+      frequency: frequency,
+      frequencyUnit: freqUnit,
+      staticDays: selectedDays,
+    );
+
+    final updatedHabit = Habit(
+      title: habitName,
+      schedule: newSchedule,
+      category: selectedCategory!,
+      description: description,
+      reminder: hasReminder,
+      reminderTime: reminderTime != null
+          ? DateTime(0, 0, 0, reminderTime!.hour, reminderTime!.minute)
+          : DateTime.now(),
+    );
+
+    // Update existing habit
+    _habitController.updateHabit(widget.habit.key as int, updatedHabit);
+
+    // Close the dialog
+    Navigator.of(context).pop(true);
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -153,8 +175,8 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                 ],
               ),
             ),
-            Divider(color: Colors.grey, thickness: 1),
-            Padding(
+            const Divider(color: Colors.grey, thickness: 1),
+            const Padding(
               padding: const EdgeInsets.all(16.0),
               child: const Center(
                 child: Text(
@@ -221,7 +243,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                 // Habit Name Field
                 _buildTextField(
                   label: "Name...",
-                  initialValue: habitName,
+                  initialValue: habitName, // Set initial value
                   onSaved: (value) => habitName = value!,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -241,6 +263,77 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                     scheduleType = newValue!;
                   }),
                 ),
+                if (scheduleType == 'periodic')
+                  // Frequency input
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextField(
+                          label: "",
+                          initialValue: frequency.toString(), // Set initial value
+                          onSaved: (value) => frequency = int.tryParse(value!) ?? 1,
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
+                      const Text(
+                        'times per ',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Expanded(
+                        child: _buildDropdown(
+                          label: '',
+                          value: frequencyUnitPeriodic,
+                          items: frequencyUnitsPeriodic,
+                          onChanged: (newValue) => setState(() {
+                            frequencyUnitPeriodic = newValue!;
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                if (scheduleType == 'interval')
+                  // Frequency input
+                  Row(
+                    children: [
+                      const SizedBox(width: 8.0),
+                      const Text(
+                        'Every ',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Expanded(
+                        child: _buildTextField(
+                          label: "",
+                          initialValue: frequency.toString(), // Set initial value
+                          onSaved: (value) => frequency = int.tryParse(value!) ?? 1,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildDropdown(
+                          label: '',
+                          value: frequencyUnit,
+                          items: frequencyUnits,
+                          onChanged: (newValue) => setState(() {
+                            frequencyUnit = newValue!;
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                if (scheduleType == 'static')
+                  Row(
+                    children: [
+                      const SizedBox(width: 8.0),
+                      const Text(
+                        'Every ',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Expanded(
+                        child: _buildDayButtons()
+                      )
+                    ],
+                  ),
 
                 const SizedBox(height: 16.0),
 
@@ -278,7 +371,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                 // Description Field
                 _buildTextField(
                   label: "Description...",
-                  initialValue: description,
+                  initialValue: description, // Set initial value
                   onSaved: (value) => description = value!,
                   maxLines: 3,
                 ),
@@ -290,25 +383,77 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
     );
   }
 
+  Widget _buildDayButtons() {
+    final daysOfWeek = {
+      'Mon': 1,
+      'Tue': 2,
+      'Wed': 3,
+      'Thu': 4,
+      'Fri': 5,
+      'Sat': 6,
+      'Sun': 7,
+    };
+
+    return Container(
+      padding: EdgeInsets.all(4.0),
+      height: 100,
+      child: Row(
+        children: daysOfWeek.keys.map((day) {
+          return Expanded(
+            child: Container(
+              height: 100,
+              padding: EdgeInsets.only(left: 4.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    int dayValue = daysOfWeek[day]!;
+                    if (selectedDays.contains(dayValue)) {
+                      selectedDays.remove(dayValue);
+                    } else {
+                      selectedDays.add(dayValue);
+                    }
+                    print('Selected days: $selectedDays'); // Print selected days to console
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedDays.contains(daysOfWeek[day]) ? orangeColor : boxColor, // Highlight selected button
+                  foregroundColor: Colors.white, // Text color
+                  shape: CircleBorder(),
+                  minimumSize: Size(40, 40), // Button size (adjust if necessary)
+                  padding: EdgeInsets.zero, // Remove internal padding
+                ),
+                child: Text(
+                  day,
+                  style: TextStyle(fontSize: 12), // Adjust font size as needed
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget _buildTextField({
     required String label,
     required FormFieldSetter<String> onSaved,
     FormFieldValidator<String>? validator,
     int maxLines = 1,
-    String? initialValue,
+    String? initialValue, // Add initialValue parameter
   }) {
     return TextFormField(
       onSaved: onSaved,
       validator: validator,
       maxLines: maxLines,
-      initialValue: initialValue,
+      initialValue: initialValue, // Set initial value
+      style: TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: label,
+        hintStyle: TextStyle(color: Colors.white),
         filled: true,
         fillColor: boxColor,
         border: InputBorder.none,
       ),
-      style: TextStyle(color: Colors.white),
     );
   }
 
@@ -323,13 +468,12 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
       children: [
         Text(label, style: const TextStyle(color: Colors.white)),
         DropdownButton<String>(
-          value: value,
+          value: items.contains(value) ? value : items.first, // Ensure value is in items
           onChanged: onChanged,
           items: items
               .map((item) => DropdownMenuItem<String>(
                     value: item,
-                    child:
-                        Text(item, style: const TextStyle(color: Colors.white)),
+                    child: Text(item, style: const TextStyle(color: Colors.white)),
                   ))
               .toList(),
           dropdownColor: boxColor,
