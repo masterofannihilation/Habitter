@@ -22,7 +22,11 @@ class AddHabitDialog extends StatefulWidget {
 class _AddHabitDialogState extends State<AddHabitDialog> {
   final _formKey = GlobalKey<FormState>();
   String habitName = '';
-  String scheduleType = 'Daily';
+  String scheduleType = 'periodic';
+  int frequency = 1;
+  String frequencyUnit = 'weeks';
+  String frequencyUnitPeriodic = 'week';
+  List<int> selectedDays = [];
   bool hasReminder = false; // Default reminder state
   TimeOfDay? reminderTime; // Default reminder time
   String description = ''; // Description
@@ -31,7 +35,9 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   final CategoryController _categoryController = CategoryController();
   final HabitController _habitController = HabitController();
   List<Category> categories = [];
-  List<String> scheduleTypes = ['Daily', 'Weekly', 'Monthly'];
+  List<String> scheduleTypes = ['periodic', 'interval', 'static'];
+  List<String> frequencyUnitsPeriodic = ['week', 'month'];
+  List<String> frequencyUnits = ['days', 'weeks', 'months'];
 
   @override
   void initState() {
@@ -52,18 +58,40 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
       _formKey.currentState!.save();
 
       ScheduleType type;
-      if (scheduleType == 'Daily') {
+      if (scheduleType == 'periodic') {
         type = ScheduleType.periodic;
-      } else if (scheduleType == 'Weekly') {
-        type = ScheduleType.periodic;
-      } else {
-        type = ScheduleType.periodic;
+        frequencyUnit = frequencyUnitPeriodic;
+      } else if (scheduleType == 'interval') {
+        type = ScheduleType.interval;
+      } else  {
+        type = ScheduleType.statical;
       }
 
-      final newSchedule = Schedule(type: type);
-
+      FrequencyUnit freqUnit;
+      if(frequencyUnit == 'weeks' || frequencyUnit == 'week') {
+        freqUnit = FrequencyUnit.weeks;
+      }
+      else if(frequencyUnit == 'months' || frequencyUnit == 'month'){
+        freqUnit = FrequencyUnit.months;
+      }
+      else {
+        freqUnit = FrequencyUnit.days;
+      }
+      
+      // Create the schedule and assign all attributes before validation
+    final newSchedule = Schedule(
+      type: type,
+      frequency: frequency,
+      frequencyUnit: freqUnit,
+      staticDays: selectedDays,
+    );
+      
       final newHabit = Habit(
-          title: habitName, schedule: newSchedule, category: selectedCategory!);
+          title: habitName, 
+          schedule: newSchedule, 
+          category: selectedCategory!,
+          description: description,
+      );
 
       // Save the habit using HabitController
       _habitController.addHabit(newHabit);
@@ -115,8 +143,8 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                 ],
               ),
             ),
-            Divider(color: Colors.grey, thickness: 1),
-            Padding(
+            const Divider(color: Colors.grey, thickness: 1),
+            const Padding(
               padding: const EdgeInsets.all(16.0),
               child: const Center(
                 child: Text(
@@ -202,6 +230,77 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                     scheduleType = newValue!;
                   }),
                 ),
+                if (scheduleType == 'periodic')
+                  // Frequency input
+                  Row(
+                  children: [
+                    Expanded(
+                    child: _buildTextField(
+                      label: "",
+                      onSaved: (value) => frequency = int.tryParse(value!) ?? 1,
+                    ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    const Text(
+                    'times per ',
+                    style: TextStyle(color: Colors.white),
+                    ),
+                    Expanded(
+                    child: _buildDropdown(
+                      label: '',
+                      value: frequencyUnitPeriodic,
+                      items: frequencyUnitsPeriodic,
+                      onChanged: (newValue) => setState(() {
+                      frequencyUnitPeriodic = newValue!;
+                      }),
+                    ),
+                    ),
+                  ],
+                  ),
+
+                if (scheduleType == 'interval')
+                  // Frequency input
+                  Row(
+                  children: [
+                    const SizedBox(width: 8.0),
+                    const Text(
+                    'Every ',
+                    style: TextStyle(color: Colors.white),
+                    ),
+                    Expanded(
+                    child: _buildTextField(
+                      label: "",
+                      onSaved: (value) => frequency = int.tryParse(value!) ?? 1,
+                    ),
+                    ),
+                    Expanded(
+                    child: _buildDropdown(
+                      label: '',
+                      value: frequencyUnit,
+                      items: frequencyUnits,
+                      onChanged: (newValue) => setState(() {
+                      frequencyUnit = newValue!;
+                      }),
+                    ),
+                    ),
+                  ],
+                  ),
+
+                if(scheduleType == 'static')
+                  Row(
+                  children: [
+                    const SizedBox(width: 8.0),
+                    const Text(
+                    'Every ',
+                    style: TextStyle(color: Colors.white),
+                    ),
+                    Expanded(
+                      child: _buildDayButtons()
+                    )
+                  ],
+                  ),
+
+                
 
                 const SizedBox(height: 16.0),
 
@@ -250,6 +349,57 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     );
   }
 
+Widget _buildDayButtons() {
+  final daysOfWeek = {
+    'Mon': 1,
+    'Tue': 2,
+    'Wen': 3,
+    'Thu': 4,
+    'Fri': 5,
+    'Sat': 6,
+    'Sun': 7,
+  };
+
+  return Container(
+    padding: EdgeInsets.all(4.0),
+    height: 100,
+    child: Row(
+      children: daysOfWeek.keys.map((day) {
+        return Expanded(
+          child: Container(
+            height: 100,
+            padding: EdgeInsets.only(left: 4.0),
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  int dayValue = daysOfWeek[day]!;
+                  if (selectedDays.contains(dayValue)) {
+                    selectedDays.remove(dayValue);
+                  } else {
+                    selectedDays.add(dayValue);
+                  }
+                  print('Selected days: $selectedDays'); // Print selected days to console
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: selectedDays.contains(daysOfWeek[day]) ? orangeColor : boxColor, // Highlight selected button
+                foregroundColor: Colors.white, // Text color
+                shape: CircleBorder(),
+                minimumSize: Size(40, 40), // Button size (adjust if necessary)
+                padding: EdgeInsets.zero, // Remove internal padding
+              ),
+              child: Text(
+                day,
+                style: TextStyle(fontSize: 12), // Adjust font size as needed
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    ),
+  );
+}
+
   Widget _buildTextField({
     required String label,
     required FormFieldSetter<String> onSaved,
@@ -260,8 +410,10 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
       onSaved: onSaved,
       validator: validator,
       maxLines: maxLines,
+      style: TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: label,
+        hintStyle: TextStyle(color: Colors.white),
         filled: true,
         fillColor: boxColor,
         border: InputBorder.none,

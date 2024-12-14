@@ -42,16 +42,16 @@ class Habit extends HiveObject {
         this.startDate = startDate ?? DateTime.now(),
         this.completionStatus = {};
 
-  // Getter for isDone (for simplicity, checks if the habit is completed today)
-  bool get isDone {
-    String today = _dateToKey(DateTime.now());
-    return completionStatus[today] ?? false;
+  // Check if the habit is completed on a specific date
+  bool isDoneOn(DateTime date) {
+    String dateKey = _dateToKey(date);
+    return completionStatus[dateKey] ?? false;
   }
 
-  // Setter for isDone (marks today's completion status)
-  set isDone(bool value) {
-    String today = _dateToKey(DateTime.now());
-    completionStatus[today] = value;
+  // Mark the habit as done or not done on a specific date
+  void setDoneOn(DateTime date, bool value) {
+    String dateKey = _dateToKey(date);
+    completionStatus[dateKey] = value;
     save(); // Save the habit after changing the status
   }
 
@@ -73,15 +73,94 @@ class Habit extends HiveObject {
 
   // Check if habit should occur on this date
   bool shouldOccurOnDate(DateTime date) {
-    if (date.isBefore(startDate)) return false;
+    // Normalize both dates to 00:00:00
+    final normalizedDate = DateTime(date.year, date.month, date.day);
+    final normalizedStartDate = DateTime(startDate.year, startDate.month, startDate.day);
+
+    if (normalizedDate.isBefore(normalizedStartDate)) {
+      return false;
+    }
 
     switch (schedule.type) {
       case ScheduleType.periodic:
-        return true;
+        if(schedule.frequencyUnit == FrequencyUnit.weeks)
+          return shouldDisplayForWeek(date);
+        else
+          return shouldDisplayForMonth(date);
       case ScheduleType.statical:
-        return schedule.staticDays.contains(date.weekday);
+        return schedule.staticDays.contains(normalizedDate.weekday);
       case ScheduleType.interval:
-        return date.difference(startDate).inDays % schedule.frequency == 0;
+        final daysSinceStart = normalizedDate.difference(normalizedStartDate).inDays;
+
+        // Handle different frequency units
+        switch (schedule.frequencyUnit) {
+          case FrequencyUnit.days:
+            return daysSinceStart % schedule.frequency == 0;
+
+          case FrequencyUnit.weeks:
+            // Convert daysSinceStart to weeks
+            final weeksSinceStart = (daysSinceStart / 7).floor();
+            return weeksSinceStart % schedule.frequency == 0;
+
+          case FrequencyUnit.months:
+            // Calculate the difference in months
+            final monthsSinceStart = (normalizedDate.year - normalizedStartDate.year) * 12 +
+                (normalizedDate.month - normalizedStartDate.month);
+
+            return monthsSinceStart % schedule.frequency == 0 &&
+                normalizedDate.day == normalizedStartDate.day;
+
+          default:
+            return false;
+        }
     }
   }
+
+  // Check if habit should be displayed based on weekly completion count
+bool shouldDisplayForWeek(DateTime date) {
+  final startOfWeek = date.subtract(Duration(days: date.weekday - 1));
+  final endOfWeek = startOfWeek.add(Duration(days: 6));
+
+  // Check if the habit was done on the given day
+  if (isDoneOn(date)) {
+    return true;
+  }
+
+  print("tu SOM");
+  // Count the number of completions this week
+  int completedThisWeek = 0;
+  for (var i = 0; i < 7; i++) {
+    final currentDay = startOfWeek.add(Duration(days: i));
+    if (completionStatus.containsKey(_dateToKey(currentDay)) && completionStatus[_dateToKey(currentDay)] == true) {
+      completedThisWeek++;
+    }
+  }
+
+  // Return true if the habit wasn't done more than n times that week
+  return completedThisWeek < schedule.frequency;
+}
+
+// Check if habit should be displayed based on monthly completion count
+bool shouldDisplayForMonth(DateTime date) {
+  final startOfMonth = DateTime(date.year, date.month, 1);
+  final endOfMonth = DateTime(date.year, date.month + 1, 0);
+
+  // Check if the habit was done on the given day
+  if (isDoneOn(date)) {
+    return true;
+  }
+
+  // Count the number of completions this month
+  int completedThisMonth = 0;
+  for (var i = 0; i < endOfMonth.day; i++) {
+    final currentDay = startOfMonth.add(Duration(days: i));
+    if (completionStatus.containsKey(_dateToKey(currentDay)) && completionStatus[_dateToKey(currentDay)] == true) {
+      completedThisMonth++;
+    }
+  }
+
+  // Return true if the habit wasn't done more than n times that month
+  return completedThisMonth < schedule.frequency;
+}
+
 }
