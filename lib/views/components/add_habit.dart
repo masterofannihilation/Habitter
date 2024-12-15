@@ -63,34 +63,33 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
         frequencyUnit = frequencyUnitPeriodic;
       } else if (scheduleType == 'interval') {
         type = ScheduleType.interval;
-      } else  {
+      } else {
         type = ScheduleType.statical;
       }
 
       FrequencyUnit freqUnit;
-      if(frequencyUnit == 'weeks' || frequencyUnit == 'week') {
+      if (frequencyUnit == 'weeks' || frequencyUnit == 'week') {
         freqUnit = FrequencyUnit.weeks;
-      }
-      else if(frequencyUnit == 'months' || frequencyUnit == 'month'){
+      } else if (frequencyUnit == 'months' || frequencyUnit == 'month') {
         freqUnit = FrequencyUnit.months;
-      }
-      else {
+      } else {
         freqUnit = FrequencyUnit.days;
       }
-      
+
       // Create the schedule and assign all attributes before validation
-    final newSchedule = Schedule(
-      type: type,
-      frequency: frequency,
-      frequencyUnit: freqUnit,
-      staticDays: selectedDays,
-    );
-      
+      final newSchedule = Schedule(
+        type: type,
+        frequency: frequency,
+        frequencyUnit: freqUnit,
+        staticDays: selectedDays,
+      );
+
       final newHabit = Habit(
-          title: habitName, 
-          schedule: newSchedule, 
-          category: selectedCategory!,
-          description: description,
+        title: habitName,
+        schedule: newSchedule,
+        category: selectedCategory!,
+        description: description,
+        startDate: widget.selectedDay ?? DateTime.now(),
       );
 
       // Save the habit using HabitController
@@ -233,74 +232,72 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                 if (scheduleType == 'periodic')
                   // Frequency input
                   Row(
-                  children: [
-                    Expanded(
-                    child: _buildTextField(
-                      label: "",
-                      onSaved: (value) => frequency = int.tryParse(value!) ?? 1,
-                    ),
-                    ),
-                    const SizedBox(width: 8.0),
-                    const Text(
-                    'times per ',
-                    style: TextStyle(color: Colors.white),
-                    ),
-                    Expanded(
-                    child: _buildDropdown(
-                      label: '',
-                      value: frequencyUnitPeriodic,
-                      items: frequencyUnitsPeriodic,
-                      onChanged: (newValue) => setState(() {
-                      frequencyUnitPeriodic = newValue!;
-                      }),
-                    ),
-                    ),
-                  ],
+                    children: [
+                      Expanded(
+                        child: _buildTextField(
+                          label: "",
+                          onSaved: (value) =>
+                              frequency = int.tryParse(value!) ?? 1,
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
+                      const Text(
+                        'times per ',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Expanded(
+                        child: _buildDropdown(
+                          label: '',
+                          value: frequencyUnitPeriodic,
+                          items: frequencyUnitsPeriodic,
+                          onChanged: (newValue) => setState(() {
+                            frequencyUnitPeriodic = newValue!;
+                          }),
+                        ),
+                      ),
+                    ],
                   ),
 
                 if (scheduleType == 'interval')
                   // Frequency input
                   Row(
-                  children: [
-                    const SizedBox(width: 8.0),
-                    const Text(
-                    'Every ',
-                    style: TextStyle(color: Colors.white),
-                    ),
-                    Expanded(
-                    child: _buildTextField(
-                      label: "",
-                      onSaved: (value) => frequency = int.tryParse(value!) ?? 1,
-                    ),
-                    ),
-                    Expanded(
-                    child: _buildDropdown(
-                      label: '',
-                      value: frequencyUnit,
-                      items: frequencyUnits,
-                      onChanged: (newValue) => setState(() {
-                      frequencyUnit = newValue!;
-                      }),
-                    ),
-                    ),
-                  ],
+                    children: [
+                      const SizedBox(width: 8.0),
+                      const Text(
+                        'Every ',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Expanded(
+                        child: _buildTextField(
+                          label: "",
+                          onSaved: (value) =>
+                              frequency = int.tryParse(value!) ?? 1,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildDropdown(
+                          label: '',
+                          value: frequencyUnit,
+                          items: frequencyUnits,
+                          onChanged: (newValue) => setState(() {
+                            frequencyUnit = newValue!;
+                          }),
+                        ),
+                      ),
+                    ],
                   ),
 
-                if(scheduleType == 'static')
+                if (scheduleType == 'static')
                   Row(
-                  children: [
-                    const SizedBox(width: 8.0),
-                    const Text(
-                    'Every ',
-                    style: TextStyle(color: Colors.white),
-                    ),
-                    Expanded(
-                      child: _buildDayButtons()
-                    )
-                  ],
+                    children: [
+                      const SizedBox(width: 8.0),
+                      const Text(
+                        'Every ',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Expanded(child: _buildDayButtons())
+                    ],
                   ),
-
-                
 
                 const SizedBox(height: 16.0),
 
@@ -349,56 +346,60 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     );
   }
 
-Widget _buildDayButtons() {
-  final daysOfWeek = {
-    'Mon': 1,
-    'Tue': 2,
-    'Wen': 3,
-    'Thu': 4,
-    'Fri': 5,
-    'Sat': 6,
-    'Sun': 7,
-  };
+  Widget _buildDayButtons() {
+    final daysOfWeek = {
+      'Mon': 1,
+      'Tue': 2,
+      'Wen': 3,
+      'Thu': 4,
+      'Fri': 5,
+      'Sat': 6,
+      'Sun': 7,
+    };
 
-  return Container(
-    padding: EdgeInsets.all(4.0),
-    height: 100,
-    child: Row(
-      children: daysOfWeek.keys.map((day) {
-        return Expanded(
-          child: Container(
-            height: 100,
-            padding: EdgeInsets.only(left: 4.0),
-            child: ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  int dayValue = daysOfWeek[day]!;
-                  if (selectedDays.contains(dayValue)) {
-                    selectedDays.remove(dayValue);
-                  } else {
-                    selectedDays.add(dayValue);
-                  }
-                  print('Selected days: $selectedDays'); // Print selected days to console
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: selectedDays.contains(daysOfWeek[day]) ? orangeColor : boxColor, // Highlight selected button
-                foregroundColor: Colors.white, // Text color
-                shape: CircleBorder(),
-                minimumSize: Size(40, 40), // Button size (adjust if necessary)
-                padding: EdgeInsets.zero, // Remove internal padding
-              ),
-              child: Text(
-                day,
-                style: TextStyle(fontSize: 12), // Adjust font size as needed
+    return Container(
+      padding: EdgeInsets.all(4.0),
+      height: 100,
+      child: Row(
+        children: daysOfWeek.keys.map((day) {
+          return Expanded(
+            child: Container(
+              height: 100,
+              padding: EdgeInsets.only(left: 4.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    int dayValue = daysOfWeek[day]!;
+                    if (selectedDays.contains(dayValue)) {
+                      selectedDays.remove(dayValue);
+                    } else {
+                      selectedDays.add(dayValue);
+                    }
+                    print(
+                        'Selected days: $selectedDays'); // Print selected days to console
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedDays.contains(daysOfWeek[day])
+                      ? orangeColor
+                      : boxColor, // Highlight selected button
+                  foregroundColor: Colors.white, // Text color
+                  shape: CircleBorder(),
+                  minimumSize:
+                      Size(40, 40), // Button size (adjust if necessary)
+                  padding: EdgeInsets.zero, // Remove internal padding
+                ),
+                child: Text(
+                  day,
+                  style: TextStyle(fontSize: 12), // Adjust font size as needed
+                ),
               ),
             ),
-          ),
-        );
-      }).toList(),
-    ),
-  );
-}
+          );
+        }).toList(),
+      ),
+    );
+  }
 
   Widget _buildTextField({
     required String label,

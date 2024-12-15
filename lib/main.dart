@@ -293,7 +293,9 @@ class _MyHomePageState extends State<MyHomePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AddHabitDialog();
+        return AddHabitDialog(
+          selectedDay: _selectedDay,
+        );
       },
     ).then((_) {
       setState(() {});
