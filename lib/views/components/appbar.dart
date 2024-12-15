@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file appbar.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:habitter_itu/constants.dart';
@@ -8,6 +13,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color bgColor;
   final int streak_count;
 
+  // Constructor with default values
   const CustomAppBar({
     Key? key,
     this.title = 'Habitter',
@@ -48,11 +54,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
         ),
-        const SizedBox(width: 8), // Add padding to keep the title centered
+        const SizedBox(width: 8),
       ],
     );
   }
 
+  // Return the preferred size of the app bar
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

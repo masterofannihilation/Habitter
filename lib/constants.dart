@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file constants.dart
+ */
+
 import 'package:flutter/material.dart';
 
 /// Colors

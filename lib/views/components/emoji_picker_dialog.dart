@@ -1,7 +1,11 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file emoji_picker_dialog.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:habitter_itu/constants.dart';
 
-// Emoji picker dialog
 // Emoji picker dialog
 class EmojiPickerDialog extends StatelessWidget {
   final int emojiCount = 1024; // Number of emojis to fetch
@@ -28,14 +32,14 @@ class EmojiPickerDialog extends StatelessWidget {
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
+                // skipping non-emoji characters
                 itemCount: emojiCount -
                     (127 - 80 + 1) -
                     (371 - 198 + 1) -
                     (479 - 372 + 1) -
-                    (779 -
-                        492 +
-                        1), // Adjust itemCount to skip the ranges of emojis that are not supported
+                    (779 - 492 + 1),
                 itemBuilder: (context, index) {
+                  // Adjust the index to skip non-emoji characters
                   int adjustedIndex = index;
                   if (index >= 80) {
                     adjustedIndex += (127 - 80 + 1);

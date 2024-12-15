@@ -1,5 +1,5 @@
 /**
- * @author Jakub Pogádl (xpogad00)
+ * @author Jakub Pogádl (xpogad00), Boris Semanco(xseman06), Boris Hatala (xhatal02)
  * @file main.dart
  */
 import 'package:flutter/material.dart';
@@ -10,6 +10,7 @@ import 'models/schedule.dart';
 import 'models/profile.dart';
 import 'models/journal.dart';
 import 'views/home.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
@@ -44,4 +45,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

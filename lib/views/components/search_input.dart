@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file search_input.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:habitter_itu/constants.dart';
 

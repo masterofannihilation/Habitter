@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file bottom_bar.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';

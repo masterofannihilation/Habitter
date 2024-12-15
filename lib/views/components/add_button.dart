@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file add_button.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:habitter_itu/constants.dart';
 

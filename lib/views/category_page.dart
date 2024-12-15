@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file category_page.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'components/appbar.dart';
@@ -29,7 +34,7 @@ class _CategoryPageState extends State<CategoryPage> {
     super.initState();
     _initializeController();
 
-    // Add listener to search controller
+    // Listener to search controller
     _searchController.addListener(_filterCategories);
   }
 
@@ -44,6 +49,7 @@ class _CategoryPageState extends State<CategoryPage> {
   void _filterCategories() {
     final query = _searchController.text.toLowerCase();
 
+    // Filter categories based on search query
     setState(() {
       if (query.isEmpty) {
         filteredCategories = categories;
@@ -133,7 +139,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 final category = filteredCategories[index];
                 return GestureDetector(
                   onTap: () {
-                    // navigate to habits list page
+                    // navigate to habits list page of the selected category
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -142,7 +148,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     );
                   },
                   onLongPress: () {
-                    // edit or delete category
+                    // edit or delete category on long press
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -196,7 +202,8 @@ class _CategoryPageState extends State<CategoryPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          category.emoji ?? '😀',
+                          category.emoji ??
+                              '😀', // if no emoji selected set default
                           style: TextStyle(fontSize: 50),
                         ),
                         Text(
@@ -222,8 +229,7 @@ class _CategoryPageState extends State<CategoryPage> {
             builder: (context) => AddCategoryDialog(),
           );
           if (category != null) {
-            _addCategory(
-                category); // Save the category using CategoryController
+            _addCategory(category); // Save the category
           }
         },
       ),
@@ -236,7 +242,7 @@ class _CategoryPageState extends State<CategoryPage> {
   @override
   void dispose() {
     _categoryController.closeBox();
-    _searchController.dispose(); // Dispose search controller
+    _searchController.dispose();
     super.dispose();
   }
 }

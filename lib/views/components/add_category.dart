@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file add_category.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/models/category.dart';

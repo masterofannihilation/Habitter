@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file statistics_page.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/controllers/habit_controller.dart';
@@ -27,6 +32,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     _loadData();
   }
 
+  // Load habits and calculate statistics
   Future<void> _loadData() async {
     await _habitController.init();
     List<Habit> loadedHabits = await _habitController.getHabits();
@@ -37,6 +43,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     });
   }
 
+  // Calculate top 5 streaks based on days of completion
   void _calculateTopStreaks() {
     topStreaks = List.from(habits);
     topStreaks.sort((a, b) => b.getStreak().compareTo(a.getStreak()));
@@ -50,6 +57,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     double totalGoalRate = 0;
     Map<String, double> categoryCount = {};
 
+    // Calculate total completion rate and goal completion rate
     for (Habit habit in habits) {
       totalCompletionRate +=
           habit.completionStatus.values.where((status) => status).length;
@@ -64,6 +72,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
     totalGoalCompletionRate =
         habits.isEmpty ? 0 : (totalCompletionRate / habits.length) * 100;
 
+    // Calculate category distribution
     categoryDistribution = categoryCount.map((key, value) {
       return MapEntry(key, (value / habits.length) * 100);
     });

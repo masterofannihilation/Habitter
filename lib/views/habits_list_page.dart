@@ -1,3 +1,8 @@
+/**
+ * @author Boris Semanco(xseman06)
+ * @file habits_list_page.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,7 +18,7 @@ import 'package:habitter_itu/models/category.dart';
 import 'components/app_drawer.dart';
 
 class HabitsListPage extends StatefulWidget {
-  final Category? category; // Add category parameter
+  final Category? category; // Add category property to filter habits
 
   HabitsListPage({this.category});
 
@@ -27,6 +32,7 @@ class _HabitsListPageState extends State<HabitsListPage> {
   List<Habit> filteredHabits = [];
   TextEditingController searchController = TextEditingController();
 
+  // Initialize the habit controller and load habits
   @override
   void initState() {
     super.initState();
@@ -37,6 +43,7 @@ class _HabitsListPageState extends State<HabitsListPage> {
   Future<void> _loadHabits() async {
     await _habitController.init();
     List<Habit> loadedHabits = await _habitController.getHabits();
+    // Filter habits by category if provided
     if (widget.category != null) {
       loadedHabits = loadedHabits
           .where((habit) => habit.category.id == widget.category!.id)
@@ -44,10 +51,11 @@ class _HabitsListPageState extends State<HabitsListPage> {
     }
     setState(() {
       habits = loadedHabits;
-      _filterHabits(); // Apply initial filter
+      _filterHabits(); // Update the filtered list
     });
   }
 
+  // Filter habits based on search query
   void _filterHabits() {
     setState(() {
       filteredHabits = habits.where((habit) {
@@ -58,17 +66,19 @@ class _HabitsListPageState extends State<HabitsListPage> {
     });
   }
 
+  // Edit habit dialog
   void _editHabit(Habit habit) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return EditHabitDialog(habit: habit); // Updated to use EditHabitDialog
+        return EditHabitDialog(habit: habit);
       },
     ).then((_) {
       _loadHabits(); // Reload habits after editing
     });
   }
 
+  // Delete habit
   void _deleteHabit(String id) async {
     await _habitController.deleteHabit(id);
     setState(() {
