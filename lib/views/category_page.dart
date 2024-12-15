@@ -7,6 +7,8 @@ import '../constants.dart';
 import '../models/category.dart';
 import '../controllers/category_controller.dart';
 import 'components/add_category.dart';
+import 'habits_list_page.dart';
+import 'components/search_input.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -111,20 +113,9 @@ class _CategoryPageState extends State<CategoryPage> {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              hintText: 'Search...',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              prefixIcon: Icon(Icons.search),
-              filled: true,
-              fillColor: boxColor,
-            ),
-          ),
+        SearchInput(
+          controller: _searchController,
+          onChanged: (value) => _filterCategories(),
         ),
         Expanded(
           child: Padding(
@@ -140,7 +131,13 @@ class _CategoryPageState extends State<CategoryPage> {
                 final category = filteredCategories[index];
                 return GestureDetector(
                   onTap: () {
-                    // TODO: list all habits in this category
+                    // navigate to habits list page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              HabitsListPage(category: category)),
+                    );
                   },
                   onLongPress: () {
                     // edit or delete category

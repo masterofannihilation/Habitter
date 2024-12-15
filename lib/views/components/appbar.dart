@@ -23,8 +23,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: SvgPicture.asset('assets/sidebar.svg'),
         onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
+          Scaffold.of(context).openDrawer();
+        },
       ),
       title: Center(
         child: Text(
@@ -38,7 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             SvgPicture.asset('assets/streak_badge.svg'),
             Positioned(
-              top: 5, // Adjust the position of the text
+              top: 5,
               child: Text(
                 '$streak_count',
                 style: GoogleFonts.poppins(
