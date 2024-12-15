@@ -14,7 +14,7 @@ class Habit extends HiveObject {
   Map<String, bool> completionStatus;
 
   @HiveField(2)
-  Schedule schedule; // Type of schedule
+  Schedule schedule;
 
   @HiveField(3)
   bool reminder;
@@ -83,7 +83,6 @@ class Habit extends HiveObject {
     final normalizedStartDate =
         DateTime(startDate.year, startDate.month, startDate.day);
 
-
     //print the name of the habit
     if (normalizedDate.isBefore(normalizedStartDate)) {
       return false;
@@ -104,19 +103,20 @@ class Habit extends HiveObject {
         // Handle different frequency units
         switch (schedule.frequencyUnit) {
           case FrequencyUnit.days:
-        print("periodic");
-        print(title);
-        bool x = daysSinceStart % schedule.frequency == 0;
-        print(x);
+            print("periodic");
+            print(title);
+            bool x = daysSinceStart % schedule.frequency == 0;
+            print(x);
             return daysSinceStart % schedule.frequency == 0;
 
           case FrequencyUnit.weeks:
             // Check if today matches the habit's schedule
             if (daysSinceStart >= 0 &&
                 daysSinceStart % (7 * schedule.frequency) == 0) {
-                  print("$daysSinceStart and ${schedule.frequency}:: ${daysSinceStart % (7 * schedule.frequency)}");
-                  print("NOW:  ${DateTime.now().weekday}");
-                  return true; // Habit is due today
+              print(
+                  "$daysSinceStart and ${schedule.frequency}:: ${daysSinceStart % (7 * schedule.frequency)}");
+              print("NOW:  ${DateTime.now().weekday}");
+              return true; // Habit is due today
             }
             return false; // Habit is not due today
 
@@ -226,14 +226,12 @@ class Habit extends HiveObject {
   // Check if habit should be displayed based on weekly completion count
   bool shouldDisplayForWeek(DateTime date) {
     final startOfWeek = date.subtract(Duration(days: date.weekday - 1));
-    final endOfWeek = startOfWeek.add(Duration(days: 6));
 
     // Check if the habit was done on the given day
     if (isDoneOn(date)) {
       return true;
     }
 
-    print("tu SOM");
     // Count the number of completions this week
     int completedThisWeek = 0;
     for (var i = 0; i < 7; i++) {
