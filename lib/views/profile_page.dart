@@ -86,27 +86,74 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Profile'),
+          backgroundColor: habitColor,
+          title: Text('Edit Profile', style: TextStyle(color: Colors.white)),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextField(
                   controller: nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  style: TextStyle(color: Colors.white),
                 ),
+                SizedBox(height: 8),
                 TextField(
                   controller: genderController,
-                  decoration: InputDecoration(labelText: 'Gender'),
+                  decoration: InputDecoration(
+                    labelText: 'Gender',
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  style: TextStyle(color: Colors.white),
                 ),
+                SizedBox(height: 8),
                 TextField(
                   controller: dateOfBirthController,
-                  decoration: InputDecoration(labelText: 'Date of Birth'),
+                  decoration: InputDecoration(
+                    labelText: 'Date of Birth',
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  style: TextStyle(color: Colors.white),
                   onTap: () async {
                     DateTime? pickedDate = await showDatePicker(
                       context: context,
                       initialDate: _profile?.dateOfBirth ?? DateTime.now(),
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            colorScheme: ColorScheme.dark(
+                              primary: habitColor, // Header background color
+                              onPrimary: Colors.white, // Header text color
+                              onSurface: Colors.white, // Body text color
+                            ),
+                            dialogBackgroundColor:
+                                Colors.white, // Background color
+                          ),
+                          child: child!,
+                        );
+                      },
                     );
                     if (pickedDate != null) {
                       dateOfBirthController.text =
@@ -114,22 +161,33 @@ class _ProfilePageState extends State<ProfilePage> {
                     }
                   },
                 ),
+                SizedBox(height: 8),
                 TextField(
                   controller: bioController,
-                  decoration: InputDecoration(labelText: 'Bio'),
+                  decoration: InputDecoration(
+                    labelText: 'Bio',
+                    labelStyle: TextStyle(color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  style: TextStyle(color: Colors.white),
                 ),
               ],
             ),
           ),
           actions: [
             TextButton(
-              child: Text('Cancel'),
+              child: Text('Cancel', style: TextStyle(color: Colors.white)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Save'),
+              child: Text('Save', style: TextStyle(color: Colors.white)),
               onPressed: () {
                 _changeName(nameController.text);
                 _changeGender(genderController.text);
@@ -215,31 +273,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 SizedBox(height: 16),
-                TextField(
-                  controller: _bioController,
-                  style:
-                      TextStyle(color: Colors.white), // Set text color to white
-                  decoration: InputDecoration(
-                    labelText: 'Bio',
-                    labelStyle: TextStyle(
-                        color: Colors.white), // Set label color to white
-                    fillColor: habitColor, // Set background color to habitColor
-                    filled: true, // Enable filling the background color
-                    border: OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.white), // Set border color to white
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors
-                              .white), // Set border color to white when focused
+                Container(
+                  padding: EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: habitColor, // Set background color to habitColor
+                    borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                    border: Border.all(
+                        color: Colors.white), // Set border color to white
+                  ),
+                  child: Text(
+                    _profile!.bio ?? '',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
                     ),
                   ),
-                  maxLines: 3,
-                  onChanged: (newBio) {
-                    _changeBio(newBio);
-                  },
                 ),
                 SizedBox(height: 16),
               ],

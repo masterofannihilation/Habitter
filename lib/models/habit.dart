@@ -83,6 +83,8 @@ class Habit extends HiveObject {
     final normalizedStartDate =
         DateTime(startDate.year, startDate.month, startDate.day);
 
+
+    //print the name of the habit
     if (normalizedDate.isBefore(normalizedStartDate)) {
       return false;
     }
@@ -102,6 +104,10 @@ class Habit extends HiveObject {
         // Handle different frequency units
         switch (schedule.frequencyUnit) {
           case FrequencyUnit.days:
+        print("periodic");
+        print(title);
+        bool x = daysSinceStart % schedule.frequency == 0;
+        print(x);
             return daysSinceStart % schedule.frequency == 0;
 
           case FrequencyUnit.weeks:
