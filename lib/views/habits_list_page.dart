@@ -37,6 +37,11 @@ class _HabitsListPageState extends State<HabitsListPage> {
   Future<void> _loadHabits() async {
     await _habitController.init();
     List<Habit> loadedHabits = await _habitController.getHabits();
+    if (widget.category != null) {
+      loadedHabits = loadedHabits
+          .where((habit) => habit.category.id == widget.category!.id)
+          .toList();
+    }
     setState(() {
       habits = loadedHabits;
       _filterHabits(); // Apply initial filter

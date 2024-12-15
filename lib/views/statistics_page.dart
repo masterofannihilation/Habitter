@@ -72,7 +72,7 @@ class _StatisticsPageState extends State<StatisticsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Statistics'),
+      appBar: CustomAppBar(),
       drawer: AppDrawer(),
       body: Container(
         padding: EdgeInsets.all(16.0),
