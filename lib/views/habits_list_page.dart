@@ -54,11 +54,11 @@ class _HabitsListPageState extends State<HabitsListPage> {
   }
 
   void _editHabit(Habit habit) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HabitPage(habit: habit),
-      ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return EditHabitDialog(habit: habit); // Updated to use EditHabitDialog
+      },
     ).then((_) {
       _loadHabits(); // Reload habits after editing
     });
@@ -79,6 +79,28 @@ class _HabitsListPageState extends State<HabitsListPage> {
       drawer: AppDrawer(),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/target.svg',
+                  color: Colors.white,
+                ),
+                Text(
+                  widget.category != null
+                      ? ' ${widget.category!.name}'
+                      : ' All Habits',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
           SearchInput(
             controller: searchController,
             onChanged: (value) => _filterHabits(),
@@ -122,7 +144,8 @@ class _HabitsListPageState extends State<HabitsListPage> {
                         ),
                         child: ListTile(
                           leading: Text(
-                            habit.category.emoji ?? '😀', // Display the category emoji
+                            habit.category.emoji ??
+                                '😀', // Display the category emoji
                             style: TextStyle(fontSize: 40.0),
                           ),
                           contentPadding: EdgeInsets.symmetric(

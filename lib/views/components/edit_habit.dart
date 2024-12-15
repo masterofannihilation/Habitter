@@ -92,14 +92,14 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
         type = ScheduleType.statical;
       }
 
-    FrequencyUnit freqUnit;
-    if (frequencyUnit == 'weeks' || frequencyUnit == 'week') {
-      freqUnit = FrequencyUnit.weeks;
-    } else if (frequencyUnit == 'months' || frequencyUnit == 'month') {
-      freqUnit = FrequencyUnit.months;
-    } else {
-      freqUnit = FrequencyUnit.days;
-    }
+      FrequencyUnit freqUnit;
+      if (frequencyUnit == 'weeks' || frequencyUnit == 'week') {
+        freqUnit = FrequencyUnit.weeks;
+      } else if (frequencyUnit == 'months' || frequencyUnit == 'month') {
+        freqUnit = FrequencyUnit.months;
+      } else {
+        freqUnit = FrequencyUnit.days;
+      }
 
       // Create the schedule and assign all attributes before validation
       final newSchedule = Schedule(
@@ -120,11 +120,11 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
             : DateTime.now(),
       );
 
-    // Preserve the original ID
+      // Preserve the original ID
       updatedHabit.id = widget.habit.id;
 
-    // Update existing habit
-    _habitController.updateHabit(widget.habit.id, updatedHabit);
+      // Update existing habit
+      _habitController.updateHabit(widget.habit.id, updatedHabit);
 
       // Close the dialog
       Navigator.of(context).pop(true);
@@ -212,7 +212,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                                 const EdgeInsets.symmetric(horizontal: 4.0),
                             child: ChoiceChip(
                               label: Text(category.name),
-                              selected: selectedCategory == category,
+                              selected: selectedCategory!.id == category.id,
                               onSelected: (bool selected) {
                                 setState(() {
                                   selectedCategory = selected ? category : null;

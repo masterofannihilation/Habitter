@@ -11,7 +11,7 @@ import 'components/app_drawer.dart';
 class HabitPage extends StatefulWidget {
   Habit habit;
 
-  HabitPage({required this.habit}){
+  HabitPage({required this.habit}) {
     print("PASSS ID: ${habit.id}");
   }
 
@@ -54,7 +54,8 @@ class _HabitPageState extends State<HabitPage> {
 
   void _deleteHabit() async {
     await _habitController.deleteHabit(widget.habit.id);
-    Navigator.of(context).pop(); // Go back to the previous screen after deletion
+    Navigator.of(context)
+        .pop(); // Go back to the previous screen after deletion
   }
 
   String dayNumberToWord(int dayNumber) {
