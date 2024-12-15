@@ -22,13 +22,15 @@ class _JournalPageState extends State<JournalPage> {
   final TextEditingController _contentController = TextEditingController();
   late Future<void> _initFuture;
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime _selectedDay = DateTime.now();
+  final int _initialPage =
+      10000; // Large number to allow swiping to past and future
+  final PageController _pageController = PageController(initialPage: 10000);
 
   @override
   void initState() {
     super.initState();
     _initFuture = _journalController.init();
-    _selectedDay = DateTime.now(); // Set the current day as the selected day by default
   }
 
   void _addJournalEntry() {
@@ -36,7 +38,7 @@ class _JournalPageState extends State<JournalPage> {
       ..id = Uuid().v4()
       ..title = _titleController.text
       ..content = _contentController.text
-      ..date = DateTime.now();
+      ..date = _selectedDay;
 
     _journalController.addJournalEntry(entry);
     _titleController.clear();
@@ -60,7 +62,8 @@ class _JournalPageState extends State<JournalPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: backgroundColor,
-          title: Text('Add Journal Entry', style: TextStyle(color: Colors.white)),
+          title:
+              Text('Add Journal Entry', style: TextStyle(color: Colors.white)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -117,7 +120,8 @@ class _JournalPageState extends State<JournalPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: backgroundColor,
-          title: Text('Edit Journal Entry', style: TextStyle(color: Colors.white)),
+          title:
+              Text('Edit Journal Entry', style: TextStyle(color: Colors.white)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -179,7 +183,10 @@ class _JournalPageState extends State<JournalPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                entry.date.toLocal().toString().split(' ')[0], // Display the date
+                entry.date
+                    .toLocal()
+                    .toString()
+                    .split(' ')[0], // Display the date
                 style: TextStyle(color: Colors.grey),
               ),
               SizedBox(height: 8),
@@ -223,24 +230,19 @@ class _JournalPageState extends State<JournalPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error initializing journal', style: TextStyle(color: Colors.white)));
+            return Center(
+                child: Text('Error initializing journal',
+                    style: TextStyle(color: Colors.white)));
           } else {
-            final journalEntries = _journalController.getJournalEntries();
-            final filteredEntries = journalEntries.where((entry) {
-              return _selectedDay == null || entry.date.toLocal().toString().split(' ')[0] == _selectedDay!.toLocal().toString().split(' ')[0];
-            }).toList();
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                 Calendar(
+            return Column(
+              children: [
+                Calendar(
                   focusedDay: _focusedDay,
                   selectedDay: _selectedDay,
                   calendarFormat: _calendarFormat,
                   onDaySelected: (selectedDay, focusedDay) {
                     setState(() {
                       _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
                     });
                   },
                   onFormatChanged: (format) {
@@ -254,69 +256,103 @@ class _JournalPageState extends State<JournalPage> {
                     _focusedDay = focusedDay;
                   },
                 ),
-                  Expanded(
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                      ),
-                      itemCount: filteredEntries.length,
-                      itemBuilder: (context, index) {
-                        final entry = filteredEntries[index];
-                        return GestureDetector(
-                          onTap: () => _showJournalEntryDetailDialog(entry),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: boxColor,
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    entry.title,
-                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Text(
-                                    entry.date.toLocal().toString().split(' ')[0], // Display the date
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                  SizedBox(height: 4),
-                                  Expanded(
-                                    child: SingleChildScrollView(
-                                      child: Text(
-                                        entry.content,
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: IconButton(
-                                      icon: Icon(Icons.delete, color: Colors.white),
-                                      onPressed: () => _deleteJournalEntry(entry.id),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _selectedDay = DateTime.now()
+                            .add(Duration(days: index - _initialPage));
+                        _focusedDay = _selectedDay;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      DateTime day = DateTime.now()
+                          .add(Duration(days: index - _initialPage));
+                      final journalEntries =
+                          _journalController.getJournalEntries();
+                      final filteredEntries = journalEntries.where((entry) {
+                        return entry.date.toLocal().toString().split(' ')[0] ==
+                            day.toLocal().toString().split(' ')[0];
+                      }).toList();
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
                           ),
-                        );
-                      },
-                    ),
+                          itemCount: filteredEntries.length,
+                          itemBuilder: (context, index) {
+                            final entry = filteredEntries[index];
+                            return GestureDetector(
+                              onTap: () => _showJournalEntryDetailDialog(entry),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: boxColor,
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        entry.title,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        entry.date
+                                            .toLocal()
+                                            .toString()
+                                            .split(' ')[0], // Display the date
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          child: Text(
+                                            entry.content,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: IconButton(
+                                          icon: Icon(Icons.delete,
+                                              color: Colors.white),
+                                          onPressed: () =>
+                                              _deleteJournalEntry(entry.id),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           }
         },
       ),
       floatingActionButton: AddButton(
-        onPressed: _showAddJournalEntryDialog,
+        onPressed: () {
+          _showAddJournalEntryDialog();
+        },
       ),
       bottomNavigationBar: BottomBar(selectedIndex: 1),
     );
