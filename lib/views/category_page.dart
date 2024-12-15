@@ -9,6 +9,7 @@ import '../controllers/category_controller.dart';
 import 'components/add_category.dart';
 import 'habits_list_page.dart';
 import 'components/search_input.dart';
+import 'components/app_drawer.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -91,6 +92,7 @@ class _CategoryPageState extends State<CategoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
+      drawer: AppDrawer(),
       backgroundColor: backgroundColor,
       body: Column(children: [
         Padding(

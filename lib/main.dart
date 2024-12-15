@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:habitter_itu/views/profile_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'views/components/appbar.dart';
@@ -12,9 +11,7 @@ import 'models/habit.dart';
 import 'models/schedule.dart';
 import 'controllers/habit_controller.dart';
 import 'models/profile.dart';
-import 'views/journal_page.dart';
 import 'models/journal.dart';
-import 'controllers/journal_controller.dart';
 import 'views/components/app_drawer.dart';
 import 'views/components/calendar.dart';
 
@@ -61,14 +58,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime? _selectedDay = DateTime.now();
 
   final HabitController _habitController = HabitController();
 
   @override
   void initState() {
     super.initState();
-    _habitController.init();
+    _initializeHabitController();
+  }
+
+  Future<void> _initializeHabitController() async {
+    await _habitController.init();
+    setState(() {}); // Refresh the UI after initialization
   }
 
   Future<List<Habit>> get _selectedDayHabits async {
@@ -92,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SingleChildScrollView(
             child: Column(
               children: [
-                 Calendar(
+                Calendar(
                   focusedDay: _focusedDay,
                   selectedDay: _selectedDay,
                   calendarFormat: _calendarFormat,
@@ -130,9 +132,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       for (var habit in snapshot.data!) {
                         if (habit.schedule.type == ScheduleType.statical) {
                           todayHabits.add(habit);
-                        } else if (habit.schedule.frequencyUnit == FrequencyUnit.weeks) {
+                        } else if (habit.schedule.frequencyUnit ==
+                            FrequencyUnit.weeks) {
                           weekHabits.add(habit);
-                        } else if (habit.schedule.frequencyUnit == FrequencyUnit.months) {
+                        } else if (habit.schedule.frequencyUnit ==
+                            FrequencyUnit.months) {
                           monthHabits.add(habit);
                         }
                       }
@@ -142,7 +146,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           if (todayHabits.isNotEmpty) ...[
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 8.0),
                               child: Text(
                                 'Today',
                                 style: TextStyle(
@@ -152,11 +157,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                             ),
-                            ...todayHabits.map((habit) => _buildHabitTile(habit)).toList(),
+                            ...todayHabits
+                                .map((habit) => _buildHabitTile(habit))
+                                .toList(),
                           ],
                           if (weekHabits.isNotEmpty) ...[
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 8.0),
                               child: Text(
                                 'This Week',
                                 style: TextStyle(
@@ -166,11 +174,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                             ),
-                            ...weekHabits.map((habit) => _buildHabitTile(habit)).toList(),
+                            ...weekHabits
+                                .map((habit) => _buildHabitTile(habit))
+                                .toList(),
                           ],
                           if (monthHabits.isNotEmpty) ...[
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 8.0),
                               child: Text(
                                 'This Month',
                                 style: TextStyle(
@@ -180,7 +191,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                             ),
-                            ...monthHabits.map((habit) => _buildHabitTile(habit)).toList(),
+                            ...monthHabits
+                                .map((habit) => _buildHabitTile(habit))
+                                .toList(),
                           ],
                         ],
                       );

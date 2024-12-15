@@ -12,11 +12,26 @@ class AppDrawer extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
+            // add some padding to the top of the drawer
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Habitter',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
             ListTile(
-              leading: Icon(Icons.person, color: Colors.white), // Set icon color to white
+              leading: Icon(Icons.person,
+                  color: Colors.white), // Set icon color to white
               title: Text(
                 'Profile',
-                style: TextStyle(color: Colors.white), // Set text color to white
+                style:
+                    TextStyle(color: Colors.white), // Set text color to white
               ),
               onTap: () {
                 Navigator.push(
@@ -26,10 +41,12 @@ class AppDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.book, color: Colors.white), // Set icon color to white
+              leading: Icon(Icons.book,
+                  color: Colors.white), // Set icon color to white
               title: Text(
                 'Journal',
-                style: TextStyle(color: Colors.white), // Set text color to white
+                style:
+                    TextStyle(color: Colors.white), // Set text color to white
               ),
               onTap: () {
                 Navigator.push(

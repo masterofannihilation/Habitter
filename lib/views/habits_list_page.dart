@@ -9,7 +9,8 @@ import 'components/bottom_bar.dart';
 import 'components/edit_habit.dart';
 import 'components/search_input.dart';
 import 'habit_page.dart';
-import 'package:habitter_itu/models/category.dart'; // Import Category model
+import 'package:habitter_itu/models/category.dart';
+import 'components/app_drawer.dart';
 
 class HabitsListPage extends StatefulWidget {
   final Category? category; // Add category parameter
@@ -79,6 +80,7 @@ class _HabitsListPageState extends State<HabitsListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(),
+      drawer: AppDrawer(),
       body: Column(
         children: [
           Padding(

@@ -3,9 +3,10 @@ import 'package:habitter_itu/controllers/habit_controller.dart';
 import 'package:habitter_itu/models/habit.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/models/schedule.dart';
-import 'components/edit_habit.dart'; // Import EditHabitDialog
+import 'components/edit_habit.dart';
 import 'components/appbar.dart';
 import 'components/bottom_bar.dart';
+import 'components/app_drawer.dart';
 
 class HabitPage extends StatefulWidget {
   final Habit habit;
@@ -28,18 +29,20 @@ class _HabitPageState extends State<HabitPage> {
     final result = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return EditHabitDialog(habit: widget.habit); // Updated to use EditHabitDialog
+        return EditHabitDialog(
+            habit: widget.habit); // Updated to use EditHabitDialog
       },
-  );
+    );
 
-  if (result == true) {
-    setState(() {}); // Refresh the page after editing
+    if (result == true) {
+      setState(() {}); // Refresh the page after editing
+    }
   }
-}
 
   void _deleteHabit() async {
     await _habitController.deleteHabit(widget.habit.key as int);
-    Navigator.of(context).pop(); // Go back to the previous screen after deletion
+    Navigator.of(context)
+        .pop(); // Go back to the previous screen after deletion
   }
 
   String dayNumberToWord(int dayNumber) {
@@ -66,7 +69,8 @@ class _HabitPageState extends State<HabitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(title: 'Habitter'),
+      appBar: const CustomAppBar(),
+      drawer: AppDrawer(),
       body: Stack(
         children: [
           Column(
@@ -84,7 +88,8 @@ class _HabitPageState extends State<HabitPage> {
                       ),
                       child: Center(
                         child: Text(
-                          widget.habit.category.emoji ?? '😀', // Display the category emoji
+                          widget.habit.category.emoji ??
+                              '😀', // Display the category emoji
                           style: const TextStyle(fontSize: 80.0),
                         ),
                       ),
@@ -108,7 +113,9 @@ class _HabitPageState extends State<HabitPage> {
                               children: [
                                 const TextSpan(
                                   text: 'Category: ',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 TextSpan(
                                   text: widget.habit.category.name,
@@ -118,43 +125,54 @@ class _HabitPageState extends State<HabitPage> {
                             ),
                           ),
                           const SizedBox(height: 8.0),
-                          if (widget.habit.schedule.type == ScheduleType.periodic)
+                          if (widget.habit.schedule.type ==
+                              ScheduleType.periodic)
                             RichText(
                               text: TextSpan(
                                 children: [
                                   const TextSpan(
                                     text: 'Frequency: ',
-                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   TextSpan(
-                                    text: '${widget.habit.schedule.frequency} times per ${widget.habit.schedule.frequencyUnit.toString().split('.').last}',
+                                    text:
+                                        '${widget.habit.schedule.frequency} times per ${widget.habit.schedule.frequencyUnit.toString().split('.').last}',
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ],
                               ),
                             ),
-                          if (widget.habit.schedule.type == ScheduleType.interval)
+                          if (widget.habit.schedule.type ==
+                              ScheduleType.interval)
                             RichText(
                               text: TextSpan(
                                 children: [
                                   const TextSpan(
                                     text: 'Frequency: ',
-                                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   TextSpan(
-                                    text: 'Every ${widget.habit.schedule.frequency} ${widget.habit.schedule.frequencyUnit.toString().split('.').last}',
+                                    text:
+                                        'Every ${widget.habit.schedule.frequency} ${widget.habit.schedule.frequencyUnit.toString().split('.').last}',
                                     style: const TextStyle(color: Colors.white),
                                   ),
                                 ],
                               ),
                             ),
-                          if (widget.habit.schedule.type == ScheduleType.statical)
+                          if (widget.habit.schedule.type ==
+                              ScheduleType.statical)
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
                                   'Static Days:',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 ...widget.habit.schedule.staticDays.map((day) {
                                   return Text(
