@@ -1,3 +1,8 @@
+/**
+ * @author Jakub Pogadl(xpogad00)
+ * @file profile_page.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
@@ -38,6 +43,8 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+
+  // functions to change profile data
   void _changeName(String newName) {
     setState(() {
       _profile?.name = newName;
@@ -73,6 +80,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _showEditDialog() {
+   
+   // Text editing controllers for the profile fields
     TextEditingController nameController =
         TextEditingController(text: _profile?.name);
     TextEditingController genderController =
@@ -141,15 +150,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       firstDate: DateTime(1900),
                       lastDate: DateTime.now(),
                       builder: (BuildContext context, Widget? child) {
-                        return Theme(
+                        return Theme( //modify the theme of the date picker
                           data: ThemeData.light().copyWith(
                             colorScheme: ColorScheme.dark(
-                              primary: habitColor, // Header background color
-                              onPrimary: Colors.white, // Header text color
-                              onSurface: Colors.white, // Body text color
+                              primary: habitColor, 
+                              onPrimary: Colors.white, 
+                              onSurface: Colors.white, 
                             ),
                             dialogBackgroundColor:
-                                Colors.white, // Background color
+                                Colors.white, 
                           ),
                           child: child!,
                         );
@@ -204,6 +213,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    
+    // Show loading indicator if profile is not loaded
     if (_profile == null) {
       return Scaffold(
         backgroundColor: backgroundColor,
@@ -229,9 +240,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: habitColor, // Set background color to habitColor
+                        color: habitColor, 
                         borderRadius:
-                            BorderRadius.circular(8.0), // Rounded corners
+                            BorderRadius.circular(8.0),
                       ),
                       child: SvgPicture.asset(
                         'assets/profile.svg',
@@ -239,6 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     SizedBox(width: 16),
+                    // Display profile information
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -276,10 +288,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 Container(
                   padding: EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
-                    color: habitColor, // Set background color to habitColor
-                    borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                    color: habitColor,
+                    borderRadius: BorderRadius.circular(8.0), 
                     border: Border.all(
-                        color: Colors.white), // Set border color to white
+                        color: Colors.white), 
                   ),
                   child: Text(
                     _profile!.bio ?? '',
@@ -293,7 +305,8 @@ class _ProfilePageState extends State<ProfilePage> {
               ],
             ),
           ),
-          Positioned(
+          
+          Positioned( // position the edit button
             top: 16,
             right: 16,
             child: IconButton(
