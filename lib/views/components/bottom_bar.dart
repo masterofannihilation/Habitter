@@ -5,6 +5,7 @@ import 'package:habitter_itu/main.dart';
 import 'package:habitter_itu/views/category_page.dart';
 import 'package:habitter_itu/views/habits_list_page.dart';
 import 'package:habitter_itu/views/statistics_page.dart';
+import 'package:habitter_itu/views/home.dart';
 
 class BottomBar extends StatefulWidget {
   final int? selectedIndex;

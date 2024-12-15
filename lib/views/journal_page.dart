@@ -1,3 +1,8 @@
+/**
+ * @author Jakub Pogadl(xpogad00)
+ * @file journal_page.dart
+ */
+
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -8,7 +13,7 @@ import 'components/appbar.dart';
 import 'components/bottom_bar.dart';
 import 'components/add_button.dart';
 import 'components/app_drawer.dart';
-import 'components/calendar.dart'; // Import the Calendar component
+import 'components/calendar.dart'; 
 
 class JournalPage extends StatefulWidget {
   @override
@@ -23,8 +28,7 @@ class _JournalPageState extends State<JournalPage> {
   late Future<void> _initFuture;
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
-  final int _initialPage =
-      10000; // Large number to allow swiping to past and future
+  final int _initialPage = 10000; // allows swiping
   final PageController _pageController = PageController(initialPage: 10000);
 
   @override
@@ -46,16 +50,19 @@ class _JournalPageState extends State<JournalPage> {
     setState(() {});
   }
 
+
   void _deleteJournalEntry(String id) {
     _journalController.deleteJournalEntry(id);
     setState(() {});
   }
 
+  // Update journal entry
   Future<void> _updateJournalEntry(JournalEntry entry) async {
     await _journalController.updateJournalEntry(entry);
     setState(() {});
   }
 
+  // Show dialog to add journal entry
   void _showAddJournalEntryDialog() {
     showDialog(
       context: context,
@@ -111,6 +118,7 @@ class _JournalPageState extends State<JournalPage> {
     );
   }
 
+  // Show dialog to edit journal entry
   void _showEditJournalEntryDialog(JournalEntry entry) {
     _titleController.text = entry.title;
     _contentController.text = entry.content;
@@ -171,6 +179,7 @@ class _JournalPageState extends State<JournalPage> {
     );
   }
 
+  // displays the content of the journal entry
   void _showJournalEntryDetailDialog(JournalEntry entry) {
     showDialog(
       context: context,
@@ -186,7 +195,7 @@ class _JournalPageState extends State<JournalPage> {
                 entry.date
                     .toLocal()
                     .toString()
-                    .split(' ')[0], // Display the date
+                    .split(' ')[0], 
                 style: TextStyle(color: Colors.grey),
               ),
               SizedBox(height: 8),

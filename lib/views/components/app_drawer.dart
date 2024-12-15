@@ -1,3 +1,8 @@
+/**
+ * @author Jakub Pogadl(xpogad00)
+ * @file app_drawer.dart
+ */
+
 import 'package:flutter/material.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/views/profile_page.dart';
@@ -8,7 +13,7 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Container(
-        color: backgroundColor, // Set the background color to match the app
+        color: backgroundColor, 
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -27,11 +32,11 @@ class AppDrawer extends StatelessWidget {
 
             ListTile(
               leading: Icon(Icons.person,
-                  color: Colors.white), // Set icon color to white
+                  color: Colors.white), 
               title: Text(
                 'Profile',
                 style:
-                    TextStyle(color: Colors.white), // Set text color to white
+                    TextStyle(color: Colors.white), 
               ),
               onTap: () {
                 Navigator.push(
@@ -42,11 +47,11 @@ class AppDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.book,
-                  color: Colors.white), // Set icon color to white
+                  color: Colors.white), 
               title: Text(
                 'Journal',
                 style:
-                    TextStyle(color: Colors.white), // Set text color to white
+                    TextStyle(color: Colors.white), 
               ),
               onTap: () {
                 Navigator.push(
@@ -55,7 +60,6 @@ class AppDrawer extends StatelessWidget {
                 );
               },
             ),
-            // Add more ListTile widgets here for other menu items
           ],
         ),
       ),
