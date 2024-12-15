@@ -98,135 +98,139 @@ class _MyHomePageState extends State<MyHomePage> {
       body: _isInitialized
           ? Stack(
               children: [
-                PageView.builder(
-                  controller: PageController(initialPage: 0),
-                  onPageChanged: (index) {
-                    setState(() {
-                      _selectedDay = DateTime.now().add(Duration(days: index));
-                      _focusedDay = _selectedDay;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Calendar(
-                            focusedDay: _focusedDay,
-                            selectedDay: _selectedDay,
-                            calendarFormat: _calendarFormat,
-                            onDaySelected: (selectedDay, focusedDay) {
-                              setState(() {
-                                _selectedDay = selectedDay;
-                                _focusedDay = focusedDay;
-                              });
-                            },
-                            onFormatChanged: (format) {
-                              if (_calendarFormat != format) {
-                                setState(() {
-                                  _calendarFormat = format;
-                                });
-                              }
-                            },
-                            onPageChanged: (focusedDay) {
-                              _focusedDay = focusedDay;
-                            },
-                          ),
-                          FutureBuilder<List<Habit>>(
-                            future: _selectedDayHabits,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return CircularProgressIndicator();
-                              } else if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              } else if (!snapshot.hasData ||
-                                  snapshot.data!.isEmpty) {
-                                return Text('No habits for the selected day');
-                              } else {
-                                List<Habit> todayHabits = [];
-                                List<Habit> weekHabits = [];
-                                List<Habit> monthHabits = [];
+                Column(
+                  children: [
+                    Calendar(
+                      focusedDay: _focusedDay,
+                      selectedDay: _selectedDay,
+                      calendarFormat: _calendarFormat,
+                      onDaySelected: (selectedDay, focusedDay) {
+                        setState(() {
+                          _selectedDay = selectedDay;
+                          _focusedDay = focusedDay;
+                        });
+                      },
+                      onFormatChanged: (format) {
+                        if (_calendarFormat != format) {
+                          setState(() {
+                            _calendarFormat = format;
+                          });
+                        }
+                      },
+                      onPageChanged: (focusedDay) {
+                        _focusedDay = focusedDay;
+                      },
+                    ),
+                    Expanded(
+                      child: PageView.builder(
+                        controller: PageController(initialPage: 0),
+                        onPageChanged: (index) {
+                          setState(() {
+                            _selectedDay =
+                                DateTime.now().add(Duration(days: index));
+                            _focusedDay = _selectedDay;
+                          });
+                        },
+                        itemBuilder: (context, index) {
+                          return SingleChildScrollView(
+                            child: FutureBuilder<List<Habit>>(
+                              future: _selectedDayHabits,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                } else if (!snapshot.hasData ||
+                                    snapshot.data!.isEmpty) {
+                                  return Text('No habits for the selected day');
+                                } else {
+                                  List<Habit> todayHabits = [];
+                                  List<Habit> weekHabits = [];
+                                  List<Habit> monthHabits = [];
 
-                                for (var habit in snapshot.data!) {
-                                  if (habit.schedule.type ==
-                                      ScheduleType.statical) {
-                                    todayHabits.add(habit);
-                                  } else if (habit.schedule.frequencyUnit ==
-                                      FrequencyUnit.weeks) {
-                                    weekHabits.add(habit);
-                                  } else if (habit.schedule.frequencyUnit ==
-                                      FrequencyUnit.months) {
-                                    monthHabits.add(habit);
+                                  for (var habit in snapshot.data!) {
+                                    if (habit.schedule.type ==
+                                        ScheduleType.statical) {
+                                      todayHabits.add(habit);
+                                    } else if (habit.schedule.frequencyUnit ==
+                                        FrequencyUnit.weeks) {
+                                      weekHabits.add(habit);
+                                    } else if (habit.schedule.frequencyUnit ==
+                                        FrequencyUnit.months) {
+                                      monthHabits.add(habit);
+                                    }
                                   }
-                                }
 
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (todayHabits.isNotEmpty) ...[
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0, vertical: 8.0),
-                                        child: Text(
-                                          'Today',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (todayHabits.isNotEmpty) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0, vertical: 8.0),
+                                          child: Text(
+                                            'Today',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      ...todayHabits
-                                          .map(
-                                              (habit) => _buildHabitTile(habit))
-                                          .toList(),
-                                    ],
-                                    if (weekHabits.isNotEmpty) ...[
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0, vertical: 8.0),
-                                        child: Text(
-                                          'This Week',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
+                                        ...todayHabits
+                                            .map((habit) =>
+                                                _buildHabitTile(habit))
+                                            .toList(),
+                                      ],
+                                      if (weekHabits.isNotEmpty) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0, vertical: 8.0),
+                                          child: Text(
+                                            'This Week',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      ...weekHabits
-                                          .map(
-                                              (habit) => _buildHabitTile(habit))
-                                          .toList(),
-                                    ],
-                                    if (monthHabits.isNotEmpty) ...[
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0, vertical: 8.0),
-                                        child: Text(
-                                          'This Month',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.bold,
+                                        ...weekHabits
+                                            .map((habit) =>
+                                                _buildHabitTile(habit))
+                                            .toList(),
+                                      ],
+                                      if (monthHabits.isNotEmpty) ...[
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0, vertical: 8.0),
+                                          child: Text(
+                                            'This Month',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      ...monthHabits
-                                          .map(
-                                              (habit) => _buildHabitTile(habit))
-                                          .toList(),
+                                        ...monthHabits
+                                            .map((habit) =>
+                                                _buildHabitTile(habit))
+                                            .toList(),
+                                      ],
+                                      SizedBox(height: 80.0),
                                     ],
-                                    SizedBox(height: 80.0),
-                                  ],
-                                );
-                              }
-                            },
-                          ),
-                        ],
+                                  );
+                                }
+                              },
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
                 Align(
                   alignment: Alignment.bottomRight,
