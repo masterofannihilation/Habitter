@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:habitter_itu/constants.dart';
 
 // Emoji picker dialog
+// Emoji picker dialog
 class EmojiPickerDialog extends StatelessWidget {
-  final int emojiCount = 1024; // Number of emojis to display
+  final int emojiCount = 1024; // Number of emojis to fetch
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +30,27 @@ class EmojiPickerDialog extends StatelessWidget {
                 ),
                 itemCount: emojiCount -
                     (127 - 80 + 1) -
+                    (371 - 198 + 1) -
                     (479 - 372 + 1) -
-                    (779 - 492 + 1), // Adjust itemCount to skip the ranges
+                    (779 -
+                        492 +
+                        1), // Adjust itemCount to skip the ranges of emojis that are not supported
                 itemBuilder: (context, index) {
                   int adjustedIndex = index;
                   if (index >= 80) {
                     adjustedIndex += (127 - 80 + 1);
                   }
-                  if (index >= 372 - (127 - 80 + 1)) {
+                  if (index >= 198 - (127 - 80 + 1)) {
+                    adjustedIndex += (371 - 198 + 1);
+                  }
+                  if (index >= 372 - (127 - 80 + 1) - (371 - 198 + 1)) {
                     adjustedIndex += (479 - 372 + 1);
                   }
-                  if (index >= 492 - (127 - 80 + 1) - (479 - 372 + 1)) {
+                  if (index >=
+                      492 -
+                          (127 - 80 + 1) -
+                          (371 - 198 + 1) -
+                          (479 - 372 + 1)) {
                     adjustedIndex += (779 - 492 + 1);
                   }
                   return GestureDetector(
