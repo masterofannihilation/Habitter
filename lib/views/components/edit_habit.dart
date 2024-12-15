@@ -92,20 +92,14 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
         type = ScheduleType.statical;
       }
 
-      FrequencyUnit freqUnit;
-      if (frequencyUnit == 'weeks' || frequencyUnit == 'week') {
-        freqUnit = FrequencyUnit.weeks;
-      } else if (frequencyUnit == 'months' || frequencyUnit == 'month') {
-        freqUnit = FrequencyUnit.months;
-      } else {
-        freqUnit = FrequencyUnit.days;
-      }
-
-      // Ensure selectedCategory are not null
-      if (selectedCategory == null) {
-        // Show an error message or handle the error appropriately
-        return;
-      }
+    FrequencyUnit freqUnit;
+    if (frequencyUnit == 'weeks' || frequencyUnit == 'week') {
+      freqUnit = FrequencyUnit.weeks;
+    } else if (frequencyUnit == 'months' || frequencyUnit == 'month') {
+      freqUnit = FrequencyUnit.months;
+    } else {
+      freqUnit = FrequencyUnit.days;
+    }
 
       // Create the schedule and assign all attributes before validation
       final newSchedule = Schedule(
@@ -126,8 +120,11 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
             : DateTime.now(),
       );
 
-      // Update existing habit
-      _habitController.updateHabit(widget.habit.key as int, updatedHabit);
+    // Preserve the original ID
+      updatedHabit.id = widget.habit.id;
+
+    // Update existing habit
+    _habitController.updateHabit(widget.habit.id, updatedHabit);
 
       // Close the dialog
       Navigator.of(context).pop(true);

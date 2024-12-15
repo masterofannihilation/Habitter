@@ -44,35 +44,31 @@ class _HabitsListPageState extends State<HabitsListPage> {
   }
 
   void _filterHabits() {
-    String query = searchController.text.toLowerCase();
     setState(() {
       filteredHabits = habits.where((habit) {
-        bool matchesCategory =
-            widget.category == null || habit.category.id == widget.category!.id;
-        bool matchesQuery = habit.title.toLowerCase().contains(query) ||
-            habit.description.toLowerCase().contains(query);
-        return matchesCategory && matchesQuery;
+        return habit.title
+            .toLowerCase()
+            .contains(searchController.text.toLowerCase());
       }).toList();
     });
   }
 
   void _editHabit(Habit habit) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return EditHabitDialog(habit: habit);
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HabitPage(habit: habit),
+      ),
     ).then((_) {
       _loadHabits(); // Reload habits after editing
     });
   }
 
-  void _deleteHabit(int index) {
-    _habitController.deleteHabit(index).then((_) {
-      setState(() {
-        habits.removeAt(index);
-        _filterHabits(); // Update the filtered list after deletion
-      });
+  void _deleteHabit(String id) async {
+    await _habitController.deleteHabit(id);
+    setState(() {
+      habits.removeWhere((habit) => habit.id == id);
+      _filterHabits(); // Update the filtered list
     });
   }
 
@@ -83,28 +79,6 @@ class _HabitsListPageState extends State<HabitsListPage> {
       drawer: AppDrawer(),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  'assets/target.svg',
-                  color: Colors.white,
-                ),
-                Text(
-                  widget.category != null
-                      ? ' ${widget.category!.name}'
-                      : ' All Habits',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
           SearchInput(
             controller: searchController,
             onChanged: (value) => _filterHabits(),
@@ -118,16 +92,16 @@ class _HabitsListPageState extends State<HabitsListPage> {
                   padding: const EdgeInsets.symmetric(
                       vertical: 4.0, horizontal: 20.0),
                   child: Slidable(
-                    key: ValueKey(habit.key),
+                    key: ValueKey(habit.id),
                     endActionPane: ActionPane(
                       motion: const ScrollMotion(),
                       extentRatio: 0.25,
                       dismissible: DismissiblePane(onDismissed: () {
-                        _deleteHabit(index);
+                        _deleteHabit(habit.id);
                       }),
                       children: [
                         SlidableAction(
-                          onPressed: (_) => _deleteHabit(index),
+                          onPressed: (_) => _deleteHabit(habit.id),
                           backgroundColor: redColor,
                           foregroundColor: Colors.white,
                           icon: Icons.delete,
@@ -138,11 +112,7 @@ class _HabitsListPageState extends State<HabitsListPage> {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HabitPage(habit: habit)),
-                        );
+                        _editHabit(habit);
                       },
                       child: Container(
                         height: 80.0,
@@ -152,8 +122,7 @@ class _HabitsListPageState extends State<HabitsListPage> {
                         ),
                         child: ListTile(
                           leading: Text(
-                            habit.category.emoji ??
-                                '😀', // Display the category emoji
+                            habit.category.emoji ?? '😀', // Display the category emoji
                             style: TextStyle(fontSize: 40.0),
                           ),
                           contentPadding: EdgeInsets.symmetric(

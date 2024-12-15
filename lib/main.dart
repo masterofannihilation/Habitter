@@ -268,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onChanged: (value) {
               setState(() {
                 habit.setDoneOn(_selectedDay!, value!);
-                _habitController.updateHabit(habit.key as int, habit);
+                _habitController.updateHabit(habit.id, habit);
                 _habitController.printAllHabits();
               });
             },

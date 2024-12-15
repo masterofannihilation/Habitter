@@ -9,9 +9,11 @@ import 'components/bottom_bar.dart';
 import 'components/app_drawer.dart';
 
 class HabitPage extends StatefulWidget {
-  final Habit habit;
+  Habit habit;
 
-  HabitPage({required this.habit});
+  HabitPage({required this.habit}){
+    print("PASSS ID: ${habit.id}");
+  }
 
   @override
   _HabitPageState createState() => _HabitPageState();
@@ -23,26 +25,36 @@ class _HabitPageState extends State<HabitPage> {
   @override
   void initState() {
     super.initState();
+    _habitController.init();
   }
 
-  void _editHabit() async {
-    final result = await showDialog(
+  void _editHabit() {
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return EditHabitDialog(
             habit: widget.habit); // Updated to use EditHabitDialog
       },
-    );
-
-    if (result == true) {
-      setState(() {}); // Refresh the page after editing
-    }
+    ).then((result) async {
+      if (result == true) {
+        _habitController.printAllHabits();
+        print("ID BEFORE FETCH: ${widget.habit.id}");
+        final updatedHabit = await _habitController.getHabit(widget.habit.id);
+        if (updatedHabit != null) {
+          setState(() {
+            widget.habit = updatedHabit;
+          });
+          print("ID AFTER FETCH: ${widget.habit.id}");
+        } else {
+          print("Error: Habit not found");
+        }
+      }
+    });
   }
 
   void _deleteHabit() async {
-    await _habitController.deleteHabit(widget.habit.key as int);
-    Navigator.of(context)
-        .pop(); // Go back to the previous screen after deletion
+    await _habitController.deleteHabit(widget.habit.id);
+    Navigator.of(context).pop(); // Go back to the previous screen after deletion
   }
 
   String dayNumberToWord(int dayNumber) {

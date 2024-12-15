@@ -14,23 +14,40 @@ class HabitController {
 
   Future<void> addHabit(Habit habit) async {
     try {
-      await _habitBox.add(habit);
+      await _habitBox.put(habit.id, habit);
     } catch (e) {
       print("Error adding habit: $e");
     }
   }
 
-  Future<void> updateHabit(int index, Habit habit) async {
+  Future<void> updateHabit(String id, Habit habit) async {
     try {
-      await _habitBox.put(index, habit);
+      final key = _habitBox.keys.firstWhere(
+        (key) => _habitBox.get(key)?.id == id,
+        orElse: () => null,
+      );
+      if (key != null) {
+        await _habitBox.put(key, habit);
+        print("Habit updated with ID: $id");
+      } else {
+        print("Error: Habit not found");
+      }
     } catch (e) {
       print("Error updating habit: $e");
     }
   }
 
-  Future<void> deleteHabit(int index) async {
+  Future<void> deleteHabit(String id) async {
     try {
-      await _habitBox.deleteAt(index);
+      final key = _habitBox.keys.firstWhere(
+        (key) => _habitBox.get(key)?.id == id,
+        orElse: () => null,
+      );
+      if (key != null) {
+        await _habitBox.delete(key);
+      } else {
+        print("Error: Habit not found");
+      }
     } catch (e) {
       print("Error deleting habit: $e");
     }
@@ -40,8 +57,15 @@ class HabitController {
     return _habitBox.values.toList();
   }
 
-  Future<Habit?> getHabit(int index) async {
-    return _habitBox.getAt(index);
+  Future<Habit?> getHabit(String id) async {
+    try {
+      return _habitBox.values.firstWhere(
+        (habit) => habit.id == id,
+      );
+    } catch (e) {
+      print("Error getting habit: $e");
+      return null;
+    }
   }
 
   List<Habit> getHabitsByTitle(String title) {
@@ -56,6 +80,8 @@ class HabitController {
     for (var habit in habits) {
       print('Habit: ${habit.title}, Description: ${habit.description}, Category: ${habit.category.name}');
       print('Completion Status: ${habit.completionStatus}\n');
+      print('ID: ${habit.id}\n');
+
     }
   }
 

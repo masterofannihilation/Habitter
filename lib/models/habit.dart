@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'schedule.dart';
+import 'package:uuid/uuid.dart';
 import 'category.dart';
 
 part 'habit.g.dart';
@@ -30,6 +31,9 @@ class Habit extends HiveObject {
   @HiveField(7)
   Category category;
 
+  @HiveField(8)
+  String id;
+
   Habit({
     required this.title,
     required this.schedule,
@@ -40,6 +44,7 @@ class Habit extends HiveObject {
     required this.category,
   })  : this.reminderTime = reminderTime ?? DateTime.now(),
         this.startDate = startDate ?? DateTime.now(),
+        this.id = Uuid().v4(), // Generate unique ID
         this.completionStatus = {};
 
   // Check if the habit is completed on a specific date
@@ -100,9 +105,14 @@ class Habit extends HiveObject {
             return daysSinceStart % schedule.frequency == 0;
 
           case FrequencyUnit.weeks:
-            // Convert daysSinceStart to weeks
-            final weeksSinceStart = (daysSinceStart / 7).floor();
-            return weeksSinceStart % schedule.frequency == 0;
+            // Check if today matches the habit's schedule
+            if (daysSinceStart >= 0 &&
+                daysSinceStart % (7 * schedule.frequency) == 0) {
+                  print("$daysSinceStart and ${schedule.frequency}:: ${daysSinceStart % (7 * schedule.frequency)}");
+                  print("NOW:  ${DateTime.now().weekday}");
+                  return true; // Habit is due today
+            }
+            return false; // Habit is not due today
 
           case FrequencyUnit.months:
             // Calculate the difference in months
