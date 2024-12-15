@@ -3,6 +3,8 @@ import 'package:habitter_itu/constants.dart';
 
 // Emoji picker dialog
 class EmojiPickerDialog extends StatelessWidget {
+  final int emojiCount = 1024; // Number of emojis to display
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -18,27 +20,43 @@ class EmojiPickerDialog extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 18),
             ),
             SizedBox(height: 20),
-            GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 8, // Number of columns
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 8, // Number of columns
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: emojiCount -
+                    (127 - 80 + 1) -
+                    (479 - 372 + 1) -
+                    (779 - 492 + 1), // Adjust itemCount to skip the ranges
+                itemBuilder: (context, index) {
+                  int adjustedIndex = index;
+                  if (index >= 80) {
+                    adjustedIndex += (127 - 80 + 1);
+                  }
+                  if (index >= 372 - (127 - 80 + 1)) {
+                    adjustedIndex += (479 - 372 + 1);
+                  }
+                  if (index >= 492 - (127 - 80 + 1) - (479 - 372 + 1)) {
+                    adjustedIndex += (779 - 492 + 1);
+                  }
+                  return GestureDetector(
+                    onTap: () {
+                      // Return the selected emoji
+                      Navigator.of(context)
+                          .pop(String.fromCharCode(0x1F600 + adjustedIndex));
+                    },
+                    child: Center(
+                      child: Text(
+                        String.fromCharCode(0x1F600 + adjustedIndex),
+                        style: TextStyle(fontSize: 24),
+                      ),
+                    ),
+                  );
+                },
               ),
-              itemCount: 80, // Number of items
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    // Return the selected emoji
-                    Navigator.of(context)
-                        .pop(String.fromCharCode(0x1F600 + index));
-                  },
-                  child: Text(
-                    String.fromCharCode(0x1F600 + index),
-                    style: TextStyle(fontSize: 24),
-                  ),
-                );
-              },
             ),
           ],
         ),
