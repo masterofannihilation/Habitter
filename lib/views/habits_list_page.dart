@@ -134,7 +134,12 @@ class _HabitsListPageState extends State<HabitsListPage> {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        _editHabit(habit);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HabitPage(habit: habit),
+                          ),
+                        );
                       },
                       child: Container(
                         height: 80.0,
