@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/controllers/habit_controller.dart';
 import 'package:habitter_itu/models/category.dart';
-import 'package:habitter_itu/models/habit.dart'; // Import the Habit model
+import 'package:habitter_itu/models/habit.dart';
 import 'package:habitter_itu/controllers/category_controller.dart';
 import 'package:habitter_itu/views/components/add_category.dart';
 import 'package:habitter_itu/models/schedule.dart';
@@ -101,8 +101,8 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
         freqUnit = FrequencyUnit.days;
       }
 
-      // Ensure frequency and selectedCategory are not null
-      if (frequency == null || selectedCategory == null) {
+      // Ensure selectedCategory are not null
+      if (selectedCategory == null) {
         // Show an error message or handle the error appropriately
         return;
       }
