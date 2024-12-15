@@ -1,3 +1,7 @@
+/**
+ * @author Boris Hatala (xhatal02)
+ * @file habit_controller.dart
+ */
 import 'package:hive/hive.dart';
 import 'package:habitter_itu/models/habit.dart';
 

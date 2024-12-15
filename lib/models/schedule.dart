@@ -1,4 +1,7 @@
-
+/**
+  * @author Boris Hatala (xhatal02) Jakub Pogádl (xpogad00) Boris Semanco(xseman06)
+ * @file schedule.dart
+ */
 import 'package:hive/hive.dart';
 
 part 'schedule.g.dart';
