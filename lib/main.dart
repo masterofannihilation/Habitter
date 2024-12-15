@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // Disable the debug banner
       title: 'Habitter',
       theme: ThemeData(
         primarySwatch: Colors.blue,

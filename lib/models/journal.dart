@@ -1,3 +1,8 @@
+/**
+ * @author Boris Hatala (xhatal02) Jakub Pogádl (xpogad00) Boris Semanco(xseman06)
+ * @file habit.dart
+ */
+
 import 'package:hive/hive.dart';
 
 part 'journal.g.dart';

@@ -1,3 +1,7 @@
+/**
+ * @author Boris Semanco (xseman06)
+ * @file category_controller.dart
+ */
 import 'package:hive/hive.dart';
 import '../models/category.dart';
 

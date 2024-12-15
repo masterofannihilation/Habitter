@@ -1,3 +1,7 @@
+/**
+ * @author Boris Hatala (xhatal02) Jakub Pogádl (xpogad00) Boris Semanco(xseman06)
+ * @file habit.dart
+ */
 import 'package:hive/hive.dart';
 import 'schedule.dart';
 import 'package:uuid/uuid.dart';
@@ -44,7 +48,7 @@ class Habit extends HiveObject {
     required this.category,
   })  : this.reminderTime = reminderTime ?? DateTime.now(),
         this.startDate = startDate ?? DateTime.now(),
-        this.id = Uuid().v4(), // Generate unique ID
+        this.id = Uuid().v4(),
         this.completionStatus = {};
 
   // Check if the habit is completed on a specific date
@@ -57,7 +61,7 @@ class Habit extends HiveObject {
   void setDoneOn(DateTime date, bool value) {
     String dateKey = _dateToKey(date);
     completionStatus[dateKey] = value;
-    save(); // Save the habit after changing the status
+    save();
   }
 
   // Convert date to string key (e.g., "2024-11-09")
@@ -83,7 +87,6 @@ class Habit extends HiveObject {
     final normalizedStartDate =
         DateTime(startDate.year, startDate.month, startDate.day);
 
-    //print the name of the habit
     if (normalizedDate.isBefore(normalizedStartDate)) {
       return false;
     }
@@ -99,8 +102,6 @@ class Habit extends HiveObject {
       case ScheduleType.interval:
         final daysSinceStart =
             normalizedDate.difference(normalizedStartDate).inDays;
-
-        // Handle different frequency units
         switch (schedule.frequencyUnit) {
           case FrequencyUnit.days:
             print("periodic");
@@ -110,15 +111,15 @@ class Habit extends HiveObject {
             return daysSinceStart % schedule.frequency == 0;
 
           case FrequencyUnit.weeks:
-            // Check if today matches the habit's schedule
+            
             if (daysSinceStart >= 0 &&
                 daysSinceStart % (7 * schedule.frequency) == 0) {
               print(
                   "$daysSinceStart and ${schedule.frequency}:: ${daysSinceStart % (7 * schedule.frequency)}");
               print("NOW:  ${DateTime.now().weekday}");
-              return true; // Habit is due today
+              return true;
             }
-            return false; // Habit is not due today
+            return false;
 
           case FrequencyUnit.months:
             // Calculate the difference in months
@@ -227,7 +228,6 @@ class Habit extends HiveObject {
   bool shouldDisplayForWeek(DateTime date) {
     final startOfWeek = date.subtract(Duration(days: date.weekday - 1));
 
-    // Check if the habit was done on the given day
     if (isDoneOn(date)) {
       return true;
     }
@@ -251,12 +251,10 @@ class Habit extends HiveObject {
     final startOfMonth = DateTime(date.year, date.month, 1);
     final endOfMonth = DateTime(date.year, date.month + 1, 0);
 
-    // Check if the habit was done on the given day
     if (isDoneOn(date)) {
       return true;
     }
 
-    // Count the number of completions this month
     int completedThisMonth = 0;
     for (var i = 0; i < endOfMonth.day; i++) {
       final currentDay = startOfMonth.add(Duration(days: i));
@@ -266,7 +264,6 @@ class Habit extends HiveObject {
       }
     }
 
-    // Return true if the habit wasn't done more than n times that month
     return completedThisMonth < schedule.frequency;
   }
 }

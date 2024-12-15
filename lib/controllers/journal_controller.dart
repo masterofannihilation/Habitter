@@ -1,3 +1,7 @@
+/**
+ * @author Jakub Pogádl (xpogad00)
+ * @file journal_controller.dart
+ */
 import 'package:hive/hive.dart';
 import '../models/journal.dart';
 
