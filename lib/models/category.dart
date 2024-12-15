@@ -21,8 +21,7 @@ class Category extends HiveObject {
   @HiveField(3)
   List<int>? habits;
 
-  // Generate a unique ID for each new Category instance
   Category({required this.name, this.emoji, List<int>? habits})
-      : id = Uuid().v4(), // Generate unique ID as a string
+      : id = Uuid().v4(),
         habits = habits ?? [];
 }

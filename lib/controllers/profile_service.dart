@@ -1,3 +1,8 @@
+/**
+ * @author Jakub Pogádl (xpogad00)
+ * @file category_controller.dart
+ */
+
 import 'package:hive/hive.dart';
 import '../models/profile.dart';
 

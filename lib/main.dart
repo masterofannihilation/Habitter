@@ -1,20 +1,14 @@
-// main.dart
+/**
+ * @author Jakub Pogádl (xpogad00)
+ * @file main.dart
+ */
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'views/components/appbar.dart';
-import 'package:habitter_itu/constants.dart';
-import 'views/components/bottom_bar.dart';
-import 'views/components/add_button.dart';
-import 'views/components/add_habit.dart';
 import 'models/category.dart';
 import 'models/habit.dart';
 import 'models/schedule.dart';
-import 'controllers/habit_controller.dart';
 import 'models/profile.dart';
 import 'models/journal.dart';
-import 'views/components/app_drawer.dart';
-import 'views/components/calendar.dart';
 import 'views/home.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
