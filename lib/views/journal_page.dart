@@ -267,13 +267,11 @@ class _JournalPageState extends State<JournalPage> {
                       });
                     },
                     itemBuilder: (context, index) {
-                      DateTime day = DateTime.now()
-                          .add(Duration(days: index - _initialPage));
                       final journalEntries =
                           _journalController.getJournalEntries();
                       final filteredEntries = journalEntries.where((entry) {
                         return entry.date.toLocal().toString().split(' ')[0] ==
-                            day.toLocal().toString().split(' ')[0];
+                            _selectedDay.toLocal().toString().split(' ')[0];
                       }).toList();
                       return Padding(
                         padding: const EdgeInsets.all(16.0),
