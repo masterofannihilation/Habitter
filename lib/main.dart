@@ -209,6 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       .map((habit) => _buildHabitTile(habit))
                                       .toList(),
                                 ],
+                                SizedBox(height: 80.0),
                               ],
                             );
                           }
