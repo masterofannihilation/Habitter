@@ -61,6 +61,9 @@ class _MyHomePageState extends State<MyHomePage> {
   CalendarFormat _calendarFormat = CalendarFormat.week;
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
+  final int _initialPage =
+      10000; // Arbitrary large number to allow swiping to past and future
+  final PageController _pageController = PageController(initialPage: 10000);
   final HabitController _habitController = HabitController();
   bool _isInitialized = false;
 
@@ -123,15 +126,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     Expanded(
                       child: PageView.builder(
-                        controller: PageController(initialPage: 0),
+                        controller: _pageController,
                         onPageChanged: (index) {
                           setState(() {
-                            _selectedDay =
-                                DateTime.now().add(Duration(days: index));
+                            _selectedDay = DateTime.now()
+                                .add(Duration(days: index - _initialPage));
                             _focusedDay = _selectedDay;
                           });
                         },
                         itemBuilder: (context, index) {
+                          DateTime day = DateTime.now()
+                              .add(Duration(days: index - _initialPage));
                           return SingleChildScrollView(
                             child: FutureBuilder<List<Habit>>(
                               future: _selectedDayHabits,
