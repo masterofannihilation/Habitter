@@ -281,23 +281,29 @@ class _MyHomePageState extends State<MyHomePage> {
               fontSize: 18.0,
             ),
           ),
-          subtitle: habit.schedule.type == ScheduleType.statical
-              ? Text(
-                  'Days: ${habit.getStaticDays()}',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14.0,
-                  ),
-                )
-              : Text(
-                  habit.schedule.frequencyUnit == FrequencyUnit.weeks
-                      ? 'This week: ${habit.getCompletions(_selectedDay!)} / ${habit.schedule.frequency} times'
-                      : 'This month: ${habit.getCompletions(_selectedDay!)} / ${habit.schedule.frequency} times',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14.0,
-                  ),
-                ),
+subtitle: () {
+  if (habit.schedule.type == ScheduleType.statical) {
+    return Text(
+      'Days: ${habit.getStaticDays()}',
+      style: TextStyle(
+        color: Colors.white70,
+        fontSize: 14.0,
+      ),
+    );
+  } else if (habit.schedule.type == ScheduleType.interval) {
+    return SizedBox.shrink(); // Do not display anything for interval schedules
+  } else {
+    return Text(
+      habit.schedule.frequencyUnit == FrequencyUnit.weeks
+          ? 'This week: ${habit.getCompletions(_selectedDay!)} / ${habit.schedule.frequency} times'
+          : 'This month: ${habit.getCompletions(_selectedDay!)} / ${habit.schedule.frequency} times',
+      style: TextStyle(
+        color: Colors.white70,
+        fontSize: 14.0,
+      ),
+    );
+  }
+}(),
           trailing: Checkbox(
             value: habit.isDoneOn(_selectedDay),
             onChanged: (value) {
