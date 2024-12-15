@@ -116,6 +116,83 @@ class Habit extends HiveObject {
     }
   }
 
+  int getTotalCompletions() {
+    return completionStatus.values.where((status) => status).length;
+  }
+
+
+  // Get static days as a string
+  String getStaticDays() {
+    List<String> days = [];
+    for (int day in schedule.staticDays) {
+      switch (day) {
+        case DateTime.monday:
+          days.add("Mon");
+          break;
+        case DateTime.tuesday:
+          days.add("Tue");
+          break;
+        case DateTime.wednesday:
+          days.add("Wed");
+          break;
+        case DateTime.thursday:
+          days.add("Thu");
+          break;
+        case DateTime.friday:
+          days.add("Fri");
+          break;
+        case DateTime.saturday:
+          days.add("Sat");
+          break;
+        case DateTime.sunday:
+          days.add("Sun");
+          break;
+      }
+    }
+    return days.join(", ");
+  }
+
+
+  int getCompletions(DateTime date) {
+    if (schedule.frequencyUnit == FrequencyUnit.weeks) {
+      return getWeeklyCompletions(date);
+    } else if (schedule.frequencyUnit == FrequencyUnit.months) {
+      return getMonthlyCompletions(date);
+    } else {
+      return 0;
+    }
+  }
+
+  // Calculate the number of completions for the current week
+  int getWeeklyCompletions(DateTime date) {
+    final startOfWeek = date.subtract(Duration(days: date.weekday - 1));
+
+    int completedThisWeek = 0;
+    for (var i = 0; i < 7; i++) {
+      final currentDay = startOfWeek.add(Duration(days: i));
+      final currentDayKey = _dateToKey(currentDay);
+      if (completionStatus.containsKey(currentDayKey) && completionStatus[currentDayKey] == true) {
+        completedThisWeek++;
+      }
+    }
+    return completedThisWeek;
+  }
+
+  // Calculate the number of completions for the current month
+  int getMonthlyCompletions(DateTime date) {
+    final startOfMonth = DateTime(date.year, date.month, 1);
+    final endOfMonth = DateTime(date.year, date.month + 1, 0);
+
+    int completedThisMonth = 0;
+    for (var i = 0; i < endOfMonth.day; i++) {
+      final currentDay = startOfMonth.add(Duration(days: i));
+      final currentDayKey = _dateToKey(currentDay);
+      if (completionStatus.containsKey(currentDayKey) && completionStatus[currentDayKey] == true) {
+        completedThisMonth++;
+      }
+    }
+    return completedThisMonth;
+  }
   // Check if habit should be displayed based on weekly completion count
 bool shouldDisplayForWeek(DateTime date) {
   final startOfWeek = date.subtract(Duration(days: date.weekday - 1));

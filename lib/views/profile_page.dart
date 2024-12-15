@@ -4,6 +4,8 @@ import 'package:habitter_itu/constants.dart';
 import 'package:habitter_itu/models/profile.dart';
 import 'package:habitter_itu/controllers/profile_service.dart';
 import 'package:habitter_itu/views/components/appbar.dart';
+import 'package:habitter_itu/views/components/app_drawer.dart';
+import 'package:habitter_itu/views/components/bottom_bar.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -28,10 +30,10 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _profile = profile ??
           Profile(
-              name: "John Doe",
-              gender: "Unknown",
+              name: "Enter Name",
+              gender: "Gender",
               dateOfBirth: DateTime.now(),
-              bio: "");
+              bio: "Enter Bio");
       _bioController.text = _profile!.bio ?? '';
     });
   }
@@ -155,6 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: CustomAppBar(),
+      drawer: AppDrawer(),
       body: Stack(
         children: [
           Padding(
@@ -207,13 +210,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             color: Colors.grey,
                           ),
                         ),
-                        Text(
-                          _profile!.bio ?? '',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
-                        ),
                       ],
                     ),
                   ],
@@ -259,6 +255,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
+      bottomNavigationBar: BottomBar(selectedIndex: 1),
     );
   }
 }

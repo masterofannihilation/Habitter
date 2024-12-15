@@ -23,12 +23,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: SvgPicture.asset('assets/sidebar.svg'),
         onPressed: () {
-          // TODO: Implement navigation drawer
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ProfilePage()),
-          );
-        },
+            Scaffold.of(context).openDrawer();
+          },
       ),
       title: Center(
         child: Text(
