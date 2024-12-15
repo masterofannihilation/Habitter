@@ -159,6 +159,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ScheduleType.statical) {
                                       todayHabits.add(habit);
                                     } else if (habit.schedule.frequencyUnit ==
+                                        FrequencyUnit.days) {
+                                      todayHabits.add(habit);
+                                    } else if (habit.schedule.frequencyUnit ==
                                         FrequencyUnit.weeks) {
                                       weekHabits.add(habit);
                                     } else if (habit.schedule.frequencyUnit ==
