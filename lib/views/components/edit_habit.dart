@@ -22,6 +22,7 @@ class EditHabitDialog extends StatefulWidget {
   _EditHabitDialogState createState() => _EditHabitDialogState();
 }
 
+// Init variables
 class _EditHabitDialogState extends State<EditHabitDialog> {
   final _formKey = GlobalKey<FormState>();
   String habitName = '';
@@ -57,6 +58,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
     });
   }
 
+  // Fill with existing info from a habit
   void _initializeFormFields() {
     final habit = widget.habit;
     habitName = habit.title;

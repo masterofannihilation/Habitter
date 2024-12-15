@@ -2,7 +2,6 @@
  * @author Boris Hatala (xhatal02)
  * @file add_habit.dart
  */
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
@@ -24,6 +23,7 @@ class AddHabitDialog extends StatefulWidget {
   _AddHabitDialogState createState() => _AddHabitDialogState();
 }
 
+// Init variables
 class _AddHabitDialogState extends State<AddHabitDialog> {
   final _formKey = GlobalKey<FormState>();
   String habitName = '';
@@ -32,10 +32,10 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   String frequencyUnit = 'weeks';
   String frequencyUnitPeriodic = 'week';
   List<int> selectedDays = [];
-  bool hasReminder = false; // Default reminder state
-  TimeOfDay? reminderTime; // Default reminder time
-  String description = ''; // Description
-  Category? selectedCategory; // Selected category for the habit
+  bool hasReminder = false; 
+  TimeOfDay? reminderTime;
+  String description = '';
+  Category? selectedCategory;
 
   final CategoryController _categoryController = CategoryController();
   final HabitController _habitController = HabitController();
@@ -58,6 +58,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     });
   }
 
+// Fill out new habit
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -100,7 +101,6 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
 
       _habitController.printAllHabits();
 
-      // Close the dialog
       Navigator.of(context).pop();
     }
   }
@@ -115,6 +115,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
         titlePadding: EdgeInsets.zero,
         title: Column(
           children: [
+            // quit button
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -135,6 +136,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                     style: TextStyle(color: Colors.white),
                   ),
                   GestureDetector(
+                    //add button
                     onTap: _submitForm,
                     child: SvgPicture.asset(
                       'assets/check.svg',
@@ -157,6 +159,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                 ),
               ),
             ),
+            //choose category
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
@@ -206,6 +209,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
             ),
           ],
         ),
+        // schedule type
         content: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -232,6 +236,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                     scheduleType = newValue!;
                   }),
                 ),
+                // Different schedule types
                 if (scheduleType == 'Per week/month')
                   Row(
                     children: [

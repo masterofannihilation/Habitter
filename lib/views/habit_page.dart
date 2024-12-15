@@ -80,6 +80,7 @@ class _HabitPageState extends State<HabitPage> {
     }
   }
 
+// Details about habit
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,6 +205,7 @@ class _HabitPageState extends State<HabitPage> {
                     ),
                   ],
                 ),
+                //description box
                 const SizedBox(height: 16.0),
                 const Text(
                   'Description',
