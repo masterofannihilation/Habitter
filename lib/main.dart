@@ -92,16 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    setState(() {
-      _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
-      int pageIndex =
-          _initialPage + selectedDay.difference(DateTime.now()).inDays;
-      _pageController.jumpToPage(pageIndex);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,9 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         setState(() {
                           _selectedDay = selectedDay;
                           _focusedDay = focusedDay;
-                          int pageIndex = _initialPage +
-                              selectedDay.difference(DateTime.now()).inDays;
-                          _pageController.jumpToPage(pageIndex);
                         });
                       },
                       onFormatChanged: (format) {
