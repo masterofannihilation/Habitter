@@ -62,16 +62,17 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
   void _initializeFormFields() {
     final habit = widget.habit;
     habitName = habit.title;
-      if (habit.schedule.type == ScheduleType.periodic) {
-        scheduleType = 'Per week/month';
-      } else if (habit.schedule.type == ScheduleType.interval) {
-        scheduleType = 'Interval';
-      } else {
-        scheduleType = 'Fixed days';
-      }
+    if (habit.schedule.type == ScheduleType.periodic) {
+      scheduleType = 'Per week/month';
+    } else if (habit.schedule.type == ScheduleType.interval) {
+      scheduleType = 'Interval';
+    } else {
+      scheduleType = 'Fixed days';
+    }
     frequency = habit.schedule.frequency;
     frequencyUnit = habit.schedule.frequencyUnit.toString().split('.').last;
-    frequencyUnitPeriodic = habit.schedule.frequencyUnit == FrequencyUnit.weeks ? 'week' : 'month';
+    frequencyUnitPeriodic =
+        habit.schedule.frequencyUnit == FrequencyUnit.weeks ? 'week' : 'month';
     if (habit.schedule.type == ScheduleType.statical) {
       selectedDays = habit.schedule.staticDays;
     }
@@ -80,7 +81,6 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
     description = habit.description;
     selectedCategory = habit.category;
 
-    
     if (!scheduleTypes.contains(scheduleType)) {
       scheduleType = scheduleTypes.first;
     }
@@ -148,6 +148,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
         dialogBackgroundColor: backgroundColor,
       ),
       child: AlertDialog(
+        backgroundColor: backgroundColor,
         titlePadding: EdgeInsets.zero,
         title: Column(
           children: [
@@ -260,7 +261,6 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                   },
                 ),
                 const SizedBox(height: 16.0),
-
                 _buildDropdown(
                   label: 'Schedule Type',
                   value: scheduleType,
@@ -277,7 +277,8 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                         child: _buildTextField(
                           label: "",
                           initialValue: frequency.toString(),
-                          onSaved: (value) => frequency = int.tryParse(value!) ?? 1,
+                          onSaved: (value) =>
+                              frequency = int.tryParse(value!) ?? 1,
                         ),
                       ),
                       const SizedBox(width: 8.0),
@@ -285,7 +286,10 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                         alignment: Alignment.center,
                         child: Text(
                           'times per',
-                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(width: 8.0),
@@ -301,7 +305,6 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                       ),
                     ],
                   ),
-
                 if (scheduleType == 'Interval')
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -310,15 +313,20 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                         alignment: Alignment.center,
                         child: Text(
                           'Every',
-                          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(width: 8.0),
                       Expanded(
                         child: _buildTextField(
                           label: "",
-                          initialValue: frequency.toString(), // Set initial value
-                          onSaved: (value) => frequency = int.tryParse(value!) ?? 1,
+                          initialValue:
+                              frequency.toString(), // Set initial value
+                          onSaved: (value) =>
+                              frequency = int.tryParse(value!) ?? 1,
                         ),
                       ),
                       const SizedBox(width: 8.0),
@@ -334,7 +342,6 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                       ),
                     ],
                   ),
-
                 if (scheduleType == 'Fixed days')
                   Row(
                     children: [
@@ -346,7 +353,6 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                       Expanded(child: _buildDayButtons())
                     ],
                   ),
-
                 const SizedBox(height: 16.0),
                 _buildSwitch(
                   label: 'Reminder:',
@@ -375,7 +381,6 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
-
                 const SizedBox(height: 16.0),
                 _buildTextField(
                   label: "Description...",
@@ -426,14 +431,19 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(label,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
         DropdownButton<String>(
           value: value,
           onChanged: onChanged,
           items: items
               .map((item) => DropdownMenuItem<String>(
                     value: item,
-                    child: Text(item, style: const TextStyle(color: Colors.white)),
+                    child:
+                        Text(item, style: const TextStyle(color: Colors.white)),
                   ))
               .toList(),
           dropdownColor: boxColor,
@@ -451,7 +461,11 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(label,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
         Switch(
           value: value,
           onChanged: onChanged,
@@ -490,8 +504,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                     } else {
                       selectedDays.add(dayValue);
                     }
-                    print(
-                        'Selected days: $selectedDays');
+                    print('Selected days: $selectedDays');
                   });
                 },
                 style: ElevatedButton.styleFrom(
@@ -500,8 +513,7 @@ class _EditHabitDialogState extends State<EditHabitDialog> {
                       : boxColor,
                   foregroundColor: Colors.white,
                   shape: CircleBorder(),
-                  minimumSize:
-                      Size(40, 40),
+                  minimumSize: Size(40, 40),
                   padding: EdgeInsets.zero,
                 ),
                 child: Text(

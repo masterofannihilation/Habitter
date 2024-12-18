@@ -32,7 +32,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
   String frequencyUnit = 'weeks';
   String frequencyUnitPeriodic = 'week';
   List<int> selectedDays = [];
-  bool hasReminder = false; 
+  bool hasReminder = false;
   TimeOfDay? reminderTime;
   String description = '';
   Category? selectedCategory;
@@ -112,6 +112,7 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
         dialogBackgroundColor: backgroundColor,
       ),
       child: AlertDialog(
+        backgroundColor: backgroundColor,
         titlePadding: EdgeInsets.zero,
         title: Column(
           children: [
@@ -250,7 +251,10 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       const SizedBox(width: 8.0),
                       const Text(
                         '   times per ',
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
                       ),
                       Expanded(
                         child: _buildDropdown(
@@ -271,7 +275,10 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
                       const SizedBox(width: 8.0),
                       const Text(
                         'Every      ',
-                        style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
                       ),
                       Expanded(
                         child: _buildTextField(
@@ -382,7 +389,11 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(label,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
         DropdownButton<String>(
           value: value,
           onChanged: onChanged,
@@ -408,7 +419,11 @@ class _AddHabitDialogState extends State<AddHabitDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(label,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
         Switch(
           value: value,
           onChanged: onChanged,
