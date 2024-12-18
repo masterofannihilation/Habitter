@@ -4,6 +4,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'components/appbar.dart';
 import 'components/bottom_bar.dart';
@@ -148,6 +149,7 @@ class _CategoryPageState extends State<CategoryPage> {
                     );
                   },
                   onLongPress: () {
+                    HapticFeedback.mediumImpact();
                     // edit or delete category on long press
                     showDialog(
                       context: context,
