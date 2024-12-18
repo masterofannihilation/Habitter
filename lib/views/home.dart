@@ -15,7 +15,6 @@ import '../controllers/habit_controller.dart';
 import '../views/components/app_drawer.dart';
 import '../views/components/calendar.dart';
 
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -102,8 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           });
                         },
                         itemBuilder: (context, index) {
-                          DateTime day = DateTime.now()
-                              .add(Duration(days: index - _initialPage));
                           return SingleChildScrollView(
                             child: FutureBuilder<List<Habit>>(
                               future: _selectedDayHabits,
@@ -117,7 +114,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     snapshot.data!.isEmpty) {
                                   return Text('No habits for the selected day');
                                 } else {
-                                  
                                   // Filter habits based on their frequency
                                   List<Habit> todayHabits = [];
                                   List<Habit> weekHabits = [];
@@ -139,8 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     }
                                   }
 
-
-                                  // Display habits based on their frequency 
+                                  // Display habits based on their frequency
                                   return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -211,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
-                
+
                 // button to add a new habit
                 Align(
                   alignment: Alignment.bottomRight,
@@ -255,7 +250,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           subtitle: () {
-
             // if the habit is statical, display the days it should occur instead of completions
             if (habit.schedule.type == ScheduleType.statical) {
               return Text(
@@ -271,8 +265,8 @@ class _MyHomePageState extends State<MyHomePage> {
             } else {
               return Text(
                 habit.schedule.frequencyUnit == FrequencyUnit.weeks
-                    ? 'This week: ${habit.getCompletions(_selectedDay!)} / ${habit.schedule.frequency} times' // Display weekly completions
-                    : 'This month: ${habit.getCompletions(_selectedDay!)} / ${habit.schedule.frequency} times', // Display monthly completions
+                    ? 'This week: ${habit.getCompletions(_selectedDay)} / ${habit.schedule.frequency} times' // Display weekly completions
+                    : 'This month: ${habit.getCompletions(_selectedDay)} / ${habit.schedule.frequency} times', // Display monthly completions
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14.0,
@@ -310,4 +304,3 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 }
-

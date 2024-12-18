@@ -14,9 +14,7 @@ import 'components/bottom_bar.dart';
 class HabitPage extends StatefulWidget {
   Habit habit;
 
-  HabitPage({required this.habit}) {
-    print("PASSS ID: ${habit.id}");
-  }
+  HabitPage({required this.habit});
 
   @override
   _HabitPageState createState() => _HabitPageState();
@@ -39,14 +37,11 @@ class _HabitPageState extends State<HabitPage> {
       },
     ).then((result) async {
       if (result == true) {
-        _habitController.printAllHabits();
-        print("ID BEFORE FETCH: ${widget.habit.id}");
         final updatedHabit = await _habitController.getHabit(widget.habit.id);
         if (updatedHabit != null) {
           setState(() {
             widget.habit = updatedHabit;
           });
-          print("ID AFTER FETCH: ${widget.habit.id}");
         } else {
           print("Error: Habit not found");
         }
@@ -185,7 +180,9 @@ class _HabitPageState extends State<HabitPage> {
                               children: [
                                 const Text(
                                   'Static Days:',
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 ...widget.habit.schedule.staticDays.map((day) {
                                   return Text(
@@ -223,8 +220,7 @@ class _HabitPageState extends State<HabitPage> {
                   decoration: BoxDecoration(
                     color: habitColor,
                     borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                        color: Colors.white),
+                    border: Border.all(color: Colors.white),
                   ),
                   child: SingleChildScrollView(
                     child: Text(

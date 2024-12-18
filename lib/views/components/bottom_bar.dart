@@ -6,7 +6,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:habitter_itu/constants.dart';
-import 'package:habitter_itu/main.dart';
 import 'package:habitter_itu/views/category_page.dart';
 import 'package:habitter_itu/views/habits_list_page.dart';
 import 'package:habitter_itu/views/statistics_page.dart';

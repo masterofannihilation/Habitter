@@ -19,6 +19,16 @@ class CategoryController {
     return _categoryBox.values.toList();
   }
 
+  // Get a category by id
+  Category? getCategoryById(String id) {
+    return _categoryBox.values.firstWhere((element) => element.id == id);
+  }
+
+  // Get a category by name
+  Category? getCategoryByName(String name) {
+    return _categoryBox.values.firstWhere((element) => element.name == name);
+  }
+
   // Add a new category
   Future<bool> addCategory(Category category) async {
     // check if category already exists
