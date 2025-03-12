@@ -1,0 +1,2 @@
+/home/annihilator/00_school/00_previous/Habitter/android/app/.cxx/Debug/345u1y5j/x86/CMakeFiles/edit_cache.dir
+/home/annihilator/00_school/00_previous/Habitter/android/app/.cxx/Debug/345u1y5j/x86/CMakeFiles/rebuild_cache.dir
