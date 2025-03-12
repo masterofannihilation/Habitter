@@ -2,8 +2,8 @@
 Habitter is a habit tracker app built with Flutter and noSQL database Hive. It helps users track their habits, take notes, set goals and monitor progress with customizable schedules.
 
 <p align="center">
-    <img src="overview.gif" alt="Habitter Demo" style="margin-right: 20px;">
-    <img src="add_new.gif" alt="Habitter Demo" style="margin-left: 20px;">
+    <img src="overview.gif" alt="Habitter Demo" style="margin-right: 40px;">
+    <img src="add_new.gif" alt="Habitter Demo" style="margin-left: 40px;">
 </p>
 
 
@@ -35,7 +35,7 @@ Habitter is a habit tracker app built with Flutter and noSQL database Hive. It h
     ```
 
 ## Authors
-Boris Hatala (https://github.com/masterofannihilation)
-Jakub Pogádl (https://github.com/jakubp5)
+Boris Hatala (https://github.com/masterofannihilation) \
+Jakub Pogádl (https://github.com/jakubp5) \
 Boris Semanco (https://github.com/VagosTurbo)
 
